@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Галерея кисок</string>
+    <string name="tab_text_1">Киски</string>
+    <string name="tab_text_2">Избранное</string>
+</resources>
