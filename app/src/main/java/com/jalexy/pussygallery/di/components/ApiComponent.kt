@@ -9,5 +9,5 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [AppModule::class, PussyApiModule::class])
 interface ApiComponent {
-    fun infect(activity: MainActivity)
+    fun inject(activity: MainActivity)
 }
