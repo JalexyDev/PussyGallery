@@ -1,4 +1,4 @@
-package com.jalexy.pussygallery.model
+package com.jalexy.pussygallery.mvp.model
 
 import com.google.gson.annotations.SerializedName
 

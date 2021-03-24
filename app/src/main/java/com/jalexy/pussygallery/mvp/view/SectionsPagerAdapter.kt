@@ -1,4 +1,4 @@
-package com.jalexy.pussygallery.view
+package com.jalexy.pussygallery.mvp.view
 
 import android.content.Context
 import androidx.fragment.app.Fragment

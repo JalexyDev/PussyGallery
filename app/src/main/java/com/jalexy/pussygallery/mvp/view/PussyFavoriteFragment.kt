@@ -1,4 +1,4 @@
-package com.jalexy.pussygallery.view
+package com.jalexy.pussygallery.mvp.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,7 +21,7 @@ class PussyFavoriteFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_main, container, false)
+        val root = inflater.inflate(R.layout.fragment_favorite, container, false)
 
         return root
     }
