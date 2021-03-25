@@ -4,18 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.jalexy.pussygallery.R
+import com.jalexy.pussygallery.mvp.presenter.PussySearchPresenter
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
 
-/**
- * A placeholder fragment containing a simple view.
- */
-class PussySearchFragment : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+class PussySearchFragment : MvpAppCompatFragment(), SearchFragmentView {
 
-    }
+    @InjectPresenter
+    lateinit var  presenter: PussySearchPresenter
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,

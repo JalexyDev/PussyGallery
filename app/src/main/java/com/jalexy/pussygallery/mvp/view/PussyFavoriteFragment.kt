@@ -4,18 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.jalexy.pussygallery.R
+import com.jalexy.pussygallery.mvp.presenter.PussyFavoritePresenter
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
 
-/**
- * A placeholder fragment containing a simple view.
- */
-class PussyFavoriteFragment : Fragment() {
+class PussyFavoriteFragment : MvpAppCompatFragment(), FavoriteFragmentView  {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
+    @InjectPresenter
+    lateinit var  presenter: PussyFavoritePresenter
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,

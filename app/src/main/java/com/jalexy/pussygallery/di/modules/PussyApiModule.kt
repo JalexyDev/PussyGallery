@@ -4,6 +4,9 @@ import android.app.Application
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import com.jalexy.pussygallery.mvp.model.PussyApi
+import com.jalexy.pussygallery.mvp.model.PussyApiManager
 import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
@@ -37,8 +40,17 @@ class PussyApiModule(val baseUrl: String) {
     @Provides
     @Singleton
     fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient) = Retrofit.Builder()
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create(gson))
         .baseUrl(baseUrl)
         .client(okHttpClient)
         .build()
+
+    @Provides
+    @Singleton
+    fun provideApiService(retrofit: Retrofit): PussyApi = retrofit.create(PussyApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideApiManager(service: PussyApi) = PussyApiManager(service)
 }
