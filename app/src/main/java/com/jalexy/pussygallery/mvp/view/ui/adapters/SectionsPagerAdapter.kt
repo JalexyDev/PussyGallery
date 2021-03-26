@@ -1,10 +1,11 @@
-package com.jalexy.pussygallery.mvp.view
+package com.jalexy.pussygallery.mvp.view.ui.adapters
 
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.jalexy.pussygallery.R
+import com.jalexy.pussygallery.mvp.view.ui.PussySearchFragment
 
 private val TAB_TITLES = arrayOf(
     R.string.tab_text_1,

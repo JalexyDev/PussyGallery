@@ -1,25 +1,26 @@
-package com.jalexy.pussygallery.mvp.view
+package com.jalexy.pussygallery.mvp.view.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jalexy.pussygallery.R
-import com.jalexy.pussygallery.mvp.presenter.PussySearchPresenter
+import com.jalexy.pussygallery.mvp.model.entities.Image
+import com.jalexy.pussygallery.mvp.presenter.PussyFavoritePresenter
+import com.jalexy.pussygallery.mvp.view.FavoriteFragmentView
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 
-
-class PussySearchFragment : MvpAppCompatFragment(), SearchFragmentView {
+class PussyFavoriteFragment : MvpAppCompatFragment(), FavoriteFragmentView {
 
     @InjectPresenter
-    lateinit var  presenter: PussySearchPresenter
+    lateinit var  presenter: PussyFavoritePresenter
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_search, container, false)
+        val root = inflater.inflate(R.layout.fragment_favorite, container, false)
 
         return root
     }
@@ -27,8 +28,8 @@ class PussySearchFragment : MvpAppCompatFragment(), SearchFragmentView {
     companion object {
 
         @JvmStatic
-        fun newInstance(): PussySearchFragment {
-            return PussySearchFragment()
+        fun newInstance(): PussyFavoriteFragment {
+            return PussyFavoriteFragment()
 //            return PlaceholderFragment().apply {
 //                arguments = Bundle().apply {
 //                    putInt(ARG_SECTION_NUMBER, sectionNumber)
@@ -36,4 +37,5 @@ class PussySearchFragment : MvpAppCompatFragment(), SearchFragmentView {
 //            }
         }
     }
+
 }

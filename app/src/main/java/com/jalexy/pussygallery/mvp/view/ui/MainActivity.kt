@@ -1,4 +1,4 @@
-package com.jalexy.pussygallery.mvp.view
+package com.jalexy.pussygallery.mvp.view.ui
 
 import android.os.Bundle
 import com.google.android.material.tabs.TabLayout
@@ -6,6 +6,7 @@ import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.R
+import com.jalexy.pussygallery.mvp.view.ui.adapters.SectionsPagerAdapter
 import retrofit2.Retrofit
 import javax.inject.Inject
 

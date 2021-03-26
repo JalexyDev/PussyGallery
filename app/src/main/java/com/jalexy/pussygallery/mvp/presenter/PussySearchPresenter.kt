@@ -3,13 +3,11 @@ package com.jalexy.pussygallery.mvp.presenter
 import android.util.Log
 import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.mvp.model.PussyApiManager
-import com.jalexy.pussygallery.mvp.view.PussySearchFragment
 import com.jalexy.pussygallery.mvp.view.SearchFragmentView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
-import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
 @InjectViewState
