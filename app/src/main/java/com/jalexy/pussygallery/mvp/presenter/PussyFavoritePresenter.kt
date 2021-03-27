@@ -2,12 +2,11 @@ package com.jalexy.pussygallery.mvp.presenter
 
 import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.mvp.model.PussyApiManager
-import com.jalexy.pussygallery.mvp.view.FavoriteFragmentView
-import moxy.InjectViewState
+import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
 import javax.inject.Inject
 
-@InjectViewState
-class PussyFavoritePresenter : BasePresenter<FavoriteFragmentView>() {
+
+class PussyFavoritePresenter(val fragmentView: PussyListFragmentView) : BasePresenter() {
 
     @Inject
     lateinit var apiManager: PussyApiManager

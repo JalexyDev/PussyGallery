@@ -3,15 +3,13 @@ package com.jalexy.pussygallery.mvp.presenter
 import android.util.Log
 import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.mvp.model.PussyApiManager
-import com.jalexy.pussygallery.mvp.view.SearchFragmentView
+import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import moxy.InjectViewState
 import javax.inject.Inject
 
-@InjectViewState
-class PussySearchPresenter : BasePresenter<SearchFragmentView>() {
+class PussySearchPresenter(val fragmentView: PussyListFragmentView) : BasePresenter() {
     @Inject
     lateinit var apiManager: PussyApiManager
 

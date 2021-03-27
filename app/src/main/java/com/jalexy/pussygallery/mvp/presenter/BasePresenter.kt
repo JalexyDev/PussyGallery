@@ -4,10 +4,8 @@ import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.di.components.AppComponent
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import moxy.MvpPresenter
-import moxy.MvpView
 
-abstract class BasePresenter<View : MvpView> : MvpPresenter<View>() {
+abstract class BasePresenter{
 
     private val disposables = CompositeDisposable()
 
@@ -15,8 +13,7 @@ abstract class BasePresenter<View : MvpView> : MvpPresenter<View>() {
         disposables.add(disposable)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    fun destroy() {
         disposables.clear()
     }
 

@@ -11,7 +11,6 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [AppModule::class, PussyApiModule::class])
 interface AppComponent {
-    fun inject(activity: MainActivity)
     fun inject(favoritePresenter: PussyFavoritePresenter)
     fun inject(searchPresenter: PussySearchPresenter)
 }

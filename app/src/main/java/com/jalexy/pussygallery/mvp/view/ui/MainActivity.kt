@@ -12,14 +12,9 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var retrofit: Retrofit
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        PussyApplication.appComponent.inject(this)
 
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
 
