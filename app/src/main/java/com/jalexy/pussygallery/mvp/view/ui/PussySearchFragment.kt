@@ -1,6 +1,7 @@
 package com.jalexy.pussygallery.mvp.view.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,11 +27,12 @@ class PussySearchFragment : Fragment(), PussyListFragmentView {
         }
     }
 
-    lateinit var  presenter: PussySearchPresenter
+    private lateinit var  presenter: PussySearchPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter = PussySearchPresenter(this)
+        presenter.fragmentOpened()
     }
 
     override fun onCreateView(
@@ -43,8 +45,13 @@ class PussySearchFragment : Fragment(), PussyListFragmentView {
         return root
     }
 
+    override fun onStart() {
+        super.onStart()
+        presenter.fragmentStarted()
+    }
+
     override fun loadFragment() {
-        TODO("Not yet implemented")
+        Log.d("Test", "loading")
     }
 
     override fun showError() {
@@ -56,15 +63,13 @@ class PussySearchFragment : Fragment(), PussyListFragmentView {
     }
 
     override fun finishLoading() {
-        TODO("Not yet implemented")
-    }
-
-    override fun puk(str: String) {
-        TODO("Not yet implemented")
+        Log.d("Test", "finished load")
     }
 
     override fun addImages(images: ArrayList<Image>) {
-        TODO("Not yet implemented")
+        for ((i, image) in images.withIndex()) {
+            Log.d("Test", "$i ${image.url}")
+        }
     }
 
     override fun addImage(image: Image) {

@@ -26,7 +26,7 @@ class PussyFavoriteFragment : Fragment(), PussyListFragmentView {
         }
     }
 
-    lateinit var  presenter: PussyFavoritePresenter
+    private lateinit var  presenter: PussyFavoritePresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,10 +55,6 @@ class PussyFavoriteFragment : Fragment(), PussyListFragmentView {
     }
 
     override fun finishLoading() {
-        TODO("Not yet implemented")
-    }
-
-    override fun puk(str: String) {
         TODO("Not yet implemented")
     }
 

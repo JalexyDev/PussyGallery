@@ -17,21 +17,21 @@ class PussyApiManager(private val apiService: PussyApi) {
             .observeOn(AndroidSchedulers.mainThread())
 
     fun getImages(
-        size: String = "full",
-        order: String = ORDER_RANDOM,
-        limit: Int = 10,
-        page: Int = 0,
-        format: String = "json"
+        size: String,
+        order: String,
+        limit: Int,
+        page: Int,
+        format: String
     ) = apiService.getImages(size, order, limit, page, format)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
     fun getImagesWithBreed(
-        size: String = "full",
-        order: String = ORDER_RANDOM,
-        limit: Int = 10,
-        page: Int = 0,
-        format: String = "json",
+        size: String,
+        order: String,
+        limit: Int,
+        page: Int,
+        format: String,
         breedId: String
     ) = apiService.getImagesWithBreed(size, order, limit, page, format, breedId)
         .subscribeOn(Schedulers.io())
@@ -39,7 +39,7 @@ class PussyApiManager(private val apiService: PussyApi) {
 
     fun addToFavorite(
         imageId: String,
-        userId: String = PussyApplication.USER_ID!!
+        userId: String
     ) = apiService.addToFavorite(imageId, userId)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())

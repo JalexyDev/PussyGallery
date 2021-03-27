@@ -2,6 +2,7 @@ package com.jalexy.pussygallery.mvp.presenter
 
 import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.di.components.AppComponent
+import com.jalexy.pussygallery.di.components.RepositoryComponent
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
@@ -17,5 +18,5 @@ abstract class BasePresenter{
         disposables.clear()
     }
 
-    fun getAppComponent(): AppComponent = PussyApplication.appComponent
+    protected fun getRepositoryComponent(): RepositoryComponent = PussyApplication.repositoryComponent
 }

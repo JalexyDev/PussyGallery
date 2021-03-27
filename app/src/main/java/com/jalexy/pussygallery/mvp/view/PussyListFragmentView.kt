@@ -17,8 +17,6 @@ interface PussyListFragmentView {
     // отрубает всю анимацию загрузки и показывает список итемов
     fun finishLoading()
 
-    fun puk(str: String)
-
     // добавляет список Image в адаптер RecyclerView
     fun addImages(images: ArrayList<Image>)
 

@@ -4,8 +4,12 @@ import android.content.Context
 import androidx.multidex.MultiDexApplication
 import com.jalexy.pussygallery.di.components.AppComponent
 import com.jalexy.pussygallery.di.components.DaggerAppComponent
+import com.jalexy.pussygallery.di.components.DaggerRepositoryComponent
+import com.jalexy.pussygallery.di.components.RepositoryComponent
 import com.jalexy.pussygallery.di.modules.AppModule
 import com.jalexy.pussygallery.di.modules.PussyApiModule
+import com.jalexy.pussygallery.di.modules.PussyRepositoryModule
+import com.jalexy.pussygallery.mvp.model.PussyRepository
 
 class PussyApplication : MultiDexApplication() {
 
@@ -18,6 +22,7 @@ class PussyApplication : MultiDexApplication() {
 
         var USER_ID: String? = null
         lateinit var appComponent: AppComponent
+        lateinit var repositoryComponent: RepositoryComponent
 
     }
 
@@ -27,6 +32,10 @@ class PussyApplication : MultiDexApplication() {
         appComponent = DaggerAppComponent.builder()
             .appModule(AppModule(this))
             .pussyApiModule(PussyApiModule(BASE_PUSSY_URL))
+            .build()
+
+        repositoryComponent = DaggerRepositoryComponent.builder()
+            .pussyRepositoryModule(PussyRepositoryModule(PussyRepository()))
             .build()
 
         val sharedPreferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
