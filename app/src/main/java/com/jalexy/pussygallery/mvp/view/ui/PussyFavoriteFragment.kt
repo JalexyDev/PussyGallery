@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.jalexy.pussygallery.R
-import com.jalexy.pussygallery.mvp.model.entities.Image
+import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.presenter.PussyFavoritePresenter
-import com.jalexy.pussygallery.mvp.presenter.PussySearchPresenter
 import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
 
 
@@ -18,11 +17,6 @@ class PussyFavoriteFragment : Fragment(), PussyListFragmentView {
         @JvmStatic
         fun newInstance(): PussyFavoriteFragment {
             return PussyFavoriteFragment()
-//            return PlaceholderFragment().apply {
-//                arguments = Bundle().apply {
-//                    putInt(ARG_SECTION_NUMBER, sectionNumber)
-//                }
-//            }
         }
     }
 
@@ -37,7 +31,7 @@ class PussyFavoriteFragment : Fragment(), PussyListFragmentView {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_favorite, container, false)
+        val root = inflater.inflate(R.layout.fragment_image_list, container, false)
 
         return root
     }
@@ -58,11 +52,11 @@ class PussyFavoriteFragment : Fragment(), PussyListFragmentView {
         TODO("Not yet implemented")
     }
 
-    override fun addImages(images: ArrayList<Image>) {
+    override fun addPussies(pussies: ArrayList<MyPussy>) {
         TODO("Not yet implemented")
     }
 
-    override fun addImage(image: Image) {
+    override fun addPussy(pussy: MyPussy) {
         TODO("Not yet implemented")
     }
 

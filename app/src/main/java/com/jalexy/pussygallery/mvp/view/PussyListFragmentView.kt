@@ -1,6 +1,6 @@
 package com.jalexy.pussygallery.mvp.view
 
-import com.jalexy.pussygallery.mvp.model.entities.Image
+import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 
 
 interface PussyListFragmentView {
@@ -18,13 +18,11 @@ interface PussyListFragmentView {
     fun finishLoading()
 
     // добавляет список Image в адаптер RecyclerView
-    fun addImages(images: ArrayList<Image>)
+    fun addPussies(pussies: ArrayList<MyPussy>)
 
     // добавляет Image в адаптер
-    fun addImage(image: Image)
+    fun addPussy(pussy: MyPussy)
 
-    // возвращает все в первоначальный вид
+    // возвращает все в первоначальный вид. Вызывается рефрешером
     fun refresh()
-
-
 }

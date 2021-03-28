@@ -2,4 +2,7 @@
     <string name="app_name">Галерея кисок</string>
     <string name="tab_text_1">Киски</string>
     <string name="tab_text_2">Избранное</string>
+    <string name="cant_download_pussies">Не удалось загрузить кисок</string>
+    <string name="retry">Повторить</string>
+    <string name="cant_load_items">Не грузит =(</string>
 </resources>

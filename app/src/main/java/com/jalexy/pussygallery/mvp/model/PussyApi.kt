@@ -2,10 +2,11 @@ package com.jalexy.pussygallery.mvp.model
 
 import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.mvp.model.entities.Image
-import com.jalexy.pussygallery.mvp.model.responses.BaseResponse
-import com.jalexy.pussygallery.mvp.model.responses.FavoriteOkResponse
 import io.reactivex.Observable
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface PussyApi {
 
@@ -34,17 +35,4 @@ interface PussyApi {
         @Query("format") format: String,
         @Query("breed_id") breedId: String
     ): Observable<ArrayList<Image>>
-
-    @Headers("x-api-key: ${PussyApplication.API_KEY}")
-    @POST
-    fun addToFavorite(
-        @Field("image_id") imageId: String,
-        @Field("sub_id") userId: String
-    ): Observable<FavoriteOkResponse>
-
-    @Headers("x-api-key: ${PussyApplication.API_KEY}")
-    @GET("favourites/{favourite_id}")
-    fun deleteFromFavorite(
-        @Path(value = "favourite_id", encoded = true) favoriteId: String
-    ): Observable<BaseResponse>
 }

@@ -1,6 +1,5 @@
 package com.jalexy.pussygallery.mvp.model
 
-import com.jalexy.pussygallery.PussyApplication
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -36,16 +35,4 @@ class PussyApiManager(private val apiService: PussyApi) {
     ) = apiService.getImagesWithBreed(size, order, limit, page, format, breedId)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-
-    fun addToFavorite(
-        imageId: String,
-        userId: String
-    ) = apiService.addToFavorite(imageId, userId)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-
-    fun deleteFromFavorite(favoriteId: String) =
-        apiService.deleteFromFavorite(favoriteId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 }
