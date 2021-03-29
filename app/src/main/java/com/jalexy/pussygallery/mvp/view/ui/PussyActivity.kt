@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -102,14 +101,6 @@ class PussyActivity : AppCompatActivity() {
             disposable = Observable.create(observableOnSubscribe)
                 .subscribeOn(Schedulers.computation())
                 .unsubscribeOn(Schedulers.io())
-                .doOnComplete {
-                    loadingImage = false
-                    Log.d("Test", "Image downloaded")
-                }
-                .doOnError {
-                    loadingImage = false
-                    Log.e("Test", it.message ?: "error!!!")
-                }
                 .subscribe()
         }
     }

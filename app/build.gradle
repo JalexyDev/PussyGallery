@@ -43,25 +43,41 @@ dependencies {
 
     implementation "androidx.multidex:multidex:2.0.1"
 
+    // RxJava2
     implementation 'io.reactivex.rxjava2:rxjava:2.2.2'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
 
+    // Retrofit2
     implementation 'com.squareup.retrofit2:retrofit:2.2.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
 
+    // Dagger2
+    def dagger_version = 2.1
+    implementation "com.google.dagger:dagger:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+
+    // Room
+    def room_version = "2.2.6"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // Gson
     implementation 'com.google.code.gson:gson:2.8.5'
 
+    // OkHttp
     implementation 'com.squareup.okhttp3:okhttp:4.8.1'
 
-    implementation 'com.google.dagger:dagger:2.1'
-    kapt 'com.google.dagger:dagger-compiler:2.1'
+    // Glide
+    def glide_version = "4.12.0"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
 
-    implementation 'com.github.bumptech.glide:glide:4.12.0'
-    kapt 'com.github.bumptech.glide:compiler:4.12.0'
-
+    // PhotoView
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

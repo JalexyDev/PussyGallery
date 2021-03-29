@@ -3,6 +3,8 @@ package com.jalexy.pussygallery.mvp.model
 import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.mvp.model.entities.Image
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class PussyRepository {
@@ -13,40 +15,29 @@ class PussyRepository {
         PussyApplication.appComponent.inject(this)
     }
 
-    fun getImage(imageId: String): Observable<Image> {
-        return apiManager.getImage(imageId)
-    }
-
     fun getImages(
         size: String = "full",
-        order: String = PussyApiManager.ORDER_RANDOM,
+        order: String = PussyApiManager.ORDER_ASC,
         limit: Int = 100,
         page: Int = 0,
         format: String = "json"
-    ): Observable<ArrayList<Image>> {
-        return apiManager.getImages(size, order, limit, page, format)
-    }
+    ): Observable<ArrayList<Image>> =
+        apiManager.getImages(size, order, limit, page, format)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 
-    fun getImagesWithBreed(
-        size: String = "full",
-        order: String = PussyApiManager.ORDER_RANDOM,
-        limit: Int = 10,
-        page: Int = 0,
-        format: String = "json",
-        breedId: String
-    ): Observable<ArrayList<Image>> {
-        return apiManager.getImagesWithBreed(size, order, limit, page, format, breedId)
-    }
 
-    //todo сделать обращение к локальной базе для реализации этих методов
-//    fun addToFavorite(
-//        imageId: String,
-//        userId: String = PussyApplication.USER_ID!!
-//    ): Observable<FavoriteOkResponse> {
-//        return  apiManager.addToFavorite(imageId, userId)
-//    }
+//    fun getFavorites(): Flowable<ArrayList<MyPussy>> =
+//        pussyDb.pussyDao().getAll()
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
 //
-//    fun deleteFromFavorite(favoriteId: String): Observable<BaseResponse> {
-//        return apiManager.deleteFromFavorite(favoriteId)
-//    }
+//    fun getFavoritesBetween(start: Int, end: Int): Observable<ArrayList<MyPussy>> =
+//        pussyDb.pussyDao().getPussiesBetween(start, end)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//
+//    fun addToFavorite(pussy: MyPussy) = Completable.fromAction { pussyDb.pussyDao().insert(pussy) }
+//
+//    fun deleteFavorite(pussy: MyPussy) = Completable.fromAction { pussyDb.pussyDao().delete(pussy) }
 }

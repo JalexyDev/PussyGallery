@@ -71,10 +71,6 @@ class PussySearchPresenter(val fragmentView: PussyListFragmentView) : BasePresen
         }
     }
 
-    fun itemClicked(pussy: MyPussy) {
-        //todo когда нажали на итем для просмотра фотки
-    }
-
     fun favoriteClicked(holder: PussyHolderView, pussy: MyPussy) {
         //todo если все норм, добавить избранную фотку в БД
 
