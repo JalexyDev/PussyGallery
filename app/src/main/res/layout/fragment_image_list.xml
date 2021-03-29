@@ -63,7 +63,7 @@
                     android:text="@string/cant_download_pussies"
                     android:textAlignment="center"
                     android:textColor="@color/grey"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
 
                 <Button
                     android:id="@+id/retry_btn"

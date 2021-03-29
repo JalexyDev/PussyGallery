@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".mvp.view.ui.PussyDetailsActivity"
+            android:name=".mvp.view.ui.PussyActivity"
             android:parentActivityName=".mvp.view.ui.MainActivity">
         </activity>
 

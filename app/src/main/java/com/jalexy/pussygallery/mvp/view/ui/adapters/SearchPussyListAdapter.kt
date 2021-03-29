@@ -1,6 +1,7 @@
 package com.jalexy.pussygallery.mvp.view.ui.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import com.jalexy.pussygallery.R
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.presenter.PussySearchPresenter
 import com.jalexy.pussygallery.mvp.view.PussyHolderView
+import com.jalexy.pussygallery.mvp.view.ui.PussyActivity
 import kotlinx.android.synthetic.main.holder_pussy.view.*
 
 class SearchPussyListAdapter(
@@ -51,6 +53,10 @@ class SearchPussyListAdapter(
 
             image.setOnClickListener{
                 //todo переход к просмотру фотки
+                context.startActivity(
+                    Intent(context, PussyActivity::class.java).apply {
+                        putExtra(PussyActivity.IMAGE_URL, pussy.url)
+                    })
             }
 
             setPussyFavorite(pussy.isFavorite)
