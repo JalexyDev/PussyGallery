@@ -9,15 +9,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jalexy.pussygallery.GlideApp
 import com.jalexy.pussygallery.R
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
-import com.jalexy.pussygallery.mvp.presenter.PussySearchPresenter
+import com.jalexy.pussygallery.mvp.presenter.BasePresenter
 import com.jalexy.pussygallery.mvp.view.PussyHolderView
 import com.jalexy.pussygallery.mvp.view.ui.PussyActivity
 import kotlinx.android.synthetic.main.holder_pussy.view.*
 
-class SearchPussyListAdapter(
+class PussyRecyclerViewAdapter(
     private val context: Context,
-    private val presenter: PussySearchPresenter
+    private val presenter: BasePresenter
 ) : BaseRecyclerViewAdapter() {
+
+    private val holders: ArrayList<PussyHolderView> by lazy {
+        ArrayList<PussyHolderView>()
+    }
 
     override fun onRetryClick() {
         presenter.retryLoad()
@@ -43,6 +47,7 @@ class SearchPussyListAdapter(
         private val favoriteBtn = itemView.favorite_btn
 
         fun bind(pussyItem: MyPussy) {
+
             pussy = pussyItem
 
             GlideApp.with(context)

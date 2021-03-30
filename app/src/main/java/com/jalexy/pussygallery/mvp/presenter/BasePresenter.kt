@@ -1,14 +1,94 @@
 package com.jalexy.pussygallery.mvp.presenter
 
+import android.util.Log
 import com.jalexy.pussygallery.PussyApplication
+import com.jalexy.pussygallery.database.DbChangeListener
 import com.jalexy.pussygallery.di.components.RepositoryComponent
+import com.jalexy.pussygallery.mvp.model.PussyRepository
+import com.jalexy.pussygallery.mvp.model.entities.MyPussy
+import com.jalexy.pussygallery.mvp.view.PussyHolderView
+import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-abstract class BasePresenter{
+abstract class BasePresenter(protected open val fragmentView: PussyListFragmentView) : DbChangeListener{
 
+    abstract var repository: PussyRepository
+    protected lateinit var myPussyItemsCache: ArrayList<MyPussy>
     protected var isFree = true
+
     private val disposables = CompositeDisposable()
+
+    abstract fun retryLoad()
+
+    protected abstract fun getPussies()
+
+    fun fragmentOpened() {
+        fragmentView.loadFragment()
+    }
+
+    fun fragmentStarted() {
+        if (myPussyItemsCache.isEmpty()) {
+            getPussies()
+        } else {
+            fragmentView.addPussies(myPussyItemsCache)
+        }
+    }
+
+    fun setFavoriteState(holder: PussyHolderView, pussy: MyPussy) {
+        val disposable: Disposable =
+            repository.getFavoriteByIdOrPussyId(pussyId = pussy.pussyId)
+                .subscribe(
+                    {
+                        if (it != MyPussy.EMPTY_PUSSY) {
+                            holder.setPussyFavorite(it != null)
+                            pussy.setInFavorite(it != null)
+                        } else {
+                            holder.setPussyFavorite(false)
+                        }
+                    },
+                    {
+                        holder?.setPussyFavorite(false)
+                    })
+
+        unsubscribeOnDestroy(disposable)
+    }
+
+    fun favoriteClicked(holder: PussyHolderView, pussy: MyPussy) {
+        val isFavorite = pussy.isInFavorite()
+
+        val completable = if (isFavorite) {
+            repository.deleteFavorite(pussy)
+        } else {
+            repository.addToFavorite(pussy)
+        }
+
+        val disposable: Disposable =
+            completable
+                .doOnComplete {
+                    holder.setPussyFavorite(!isFavorite)
+                    pussy.setInFavorite(!isFavorite)
+
+                    if (isFavorite) {
+                        repository.pussyRemovedFromFavorite(pussy)
+                    } else {
+                        repository.pussyAddedToFavorite(pussy)
+                    }
+                }
+                .doOnError {
+                    Log.e("Base Presenter", it.message ?: "presenter exception")
+                    holder?.setPussyFavorite(isFavorite)
+                }
+                .subscribe()
+
+        unsubscribeOnDestroy(disposable)
+    }
+
+    open fun refreshFragment() {
+        fragmentView.loadFragment()
+        myPussyItemsCache = ArrayList()
+        fragmentView.refresh()
+    }
 
     protected fun unsubscribeOnDestroy(disposable: Disposable) {
         disposables.add(disposable)

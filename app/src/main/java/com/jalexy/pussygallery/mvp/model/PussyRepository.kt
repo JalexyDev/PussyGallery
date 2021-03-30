@@ -1,6 +1,7 @@
 package com.jalexy.pussygallery.mvp.model
 
 import com.jalexy.pussygallery.PussyApplication
+import com.jalexy.pussygallery.database.DbChangeListener
 import com.jalexy.pussygallery.mvp.model.entities.Image
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import io.reactivex.Completable
@@ -17,8 +18,34 @@ class PussyRepository {
     @Inject
     lateinit var dbManager: PussyFavoriteDbManager
 
+    private val observers: ArrayList<DbChangeListener> by lazy {
+        ArrayList<DbChangeListener>()
+    }
+
     init {
         PussyApplication.appComponent.inject(this)
+    }
+
+    fun addDbChangeListener(listener: DbChangeListener) {
+        observers.add(listener)
+    }
+
+    fun removeDbChangeListener(listener: DbChangeListener) {
+        observers.remove(listener)
+    }
+
+    fun pussyRemovedFromFavorite(pussy: MyPussy) {
+        pussy.setInFavorite(false)
+        for (observer in observers) {
+            observer?.removed(pussy)
+        }
+    }
+
+    fun pussyAddedToFavorite(pussy: MyPussy) {
+        pussy.setInFavorite(true)
+        for (observer in observers) {
+            observer?.added(pussy)
+        }
     }
 
     fun getImages(
@@ -34,8 +61,8 @@ class PussyRepository {
 
     fun getFavorites(): Flowable<ArrayList<MyPussy>> =
         dbManager.getAllFavorites()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 
     fun getFavoriteByIdOrPussyId(id: Int = -1, pussyId: String = ""): Observable<MyPussy> =
         dbManager.getFavoritePussy(id, pussyId)

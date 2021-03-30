@@ -4,28 +4,27 @@ import android.util.Log
 import com.jalexy.pussygallery.mvp.model.PussyRepository
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy.Companion.FALSE
-import com.jalexy.pussygallery.mvp.view.PussyHolderView
-import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
+import com.jalexy.pussygallery.mvp.view.PussySearchFragmentView
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
-class PussySearchPresenter(val fragmentView: PussyListFragmentView) : BasePresenter() {
+class PussySearchPresenter(override val fragmentView: PussySearchFragmentView) : BasePresenter(fragmentView) {
 
     @Inject
-    lateinit var repository: PussyRepository
+    override lateinit var repository: PussyRepository
 
     // для задания полная форма бесполезна, но если надо, то вот она
-//    private var imageItemsCash: ArrayList<Image>
+    // private var imageItemsCash: ArrayList<Image>
 
-    private var myPussyItemsCache: ArrayList<MyPussy>
     private var page = 0
 
     init {
         getRepositoryComponent().inject(this)
         myPussyItemsCache = ArrayList()
+        registerOnUpdates()
     }
 
-    private fun getImages(page: Int = 0) {
+    override fun getPussies() {
         isFree = false
 
         val disposable: Disposable = repository.getImages(page = page)
@@ -44,80 +43,39 @@ class PussySearchPresenter(val fragmentView: PussyListFragmentView) : BasePresen
                 { throwable ->
                     Log.e("get request ", throwable?.message ?: "PUK")
                     fragmentView?.showError()
+                    isFree = true
                 })
 
         unsubscribeOnDestroy(disposable)
     }
 
-    fun fragmentOpened() {
-        fragmentView.loadFragment()
+    override fun retryLoad() {
+        //todo повторить последний запрос
     }
 
-    fun fragmentStarted() {
-        if (myPussyItemsCache.isEmpty()) {
-            getImages()
-        } else {
-            fragmentView.addPussies(myPussyItemsCache)
-        }
-    }
-
+    // подгрузка если долистал до конца
     fun scrolledToEnd() {
         if (isFree) {
             fragmentView.loadItems()
-            getImages(++page)
+            page++
+            getPussies()
         }
     }
 
-    fun setFavoriteState(holder: PussyHolderView, pussy: MyPussy) {
-        val disposable: Disposable =
-            repository.getFavoriteByIdOrPussyId(pussyId = pussy.pussyId)
-                .subscribe(
-                    {
-                        if (it != MyPussy.EMPTY_PUSSY) {
-                            holder.setPussyFavorite(it != null)
-                            pussy.setInFavorite(it != null)
-                        } else {
-                            holder.setPussyFavorite(false)
-                        }
-                    },
-                    {
-                        holder?.setPussyFavorite(false)
-                    })
-
-        unsubscribeOnDestroy(disposable)
-    }
-
-    fun favoriteClicked(holder: PussyHolderView, pussy: MyPussy) {
-        val isFavorite = pussy.isInFavorite()
-
-        val completable = if (isFavorite) {
-            repository.deleteFavorite(pussy)
-        } else {
-            repository.addToFavorite(pussy)
-        }
-
-        val disposable: Disposable =
-            completable
-                .doOnComplete {
-                    holder.setPussyFavorite(!isFavorite)
-                    pussy.setInFavorite(!isFavorite)
-                }
-                .doOnError { holder?.setPussyFavorite(isFavorite) }
-                .subscribe()
-
-        unsubscribeOnDestroy(disposable)
-    }
-
-    fun retryLoad() {
-        //todo повторить последний запрос на подгрузку
-    }
-
-    fun refreshFragment() {
-        fragmentView.loadFragment()
-
-        myPussyItemsCache = ArrayList()
+    override fun refreshFragment() {
         page = 0
+        super.refreshFragment()
+    }
 
-        fragmentView.refresh()
+    override fun removed(pussy: MyPussy) {
+        fragmentView.updatePussy(pussy)
+    }
+
+    override fun added(pussy: MyPussy) {
+        fragmentView.updatePussy(pussy)
+    }
+
+    override fun registerOnUpdates() {
+        repository.addDbChangeListener(this)
     }
 }

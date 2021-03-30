@@ -16,12 +16,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.jalexy.pussygallery.R
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.presenter.PussySearchPresenter
-import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
-import com.jalexy.pussygallery.mvp.view.ui.adapters.SearchPussyListAdapter
+import com.jalexy.pussygallery.mvp.view.PussySearchFragmentView
+import com.jalexy.pussygallery.mvp.view.ui.adapters.PussyRecyclerViewAdapter
 import kotlinx.android.synthetic.main.fragment_image_list.view.*
 
 
-class PussySearchFragment : Fragment(), PussyListFragmentView, SwipeRefreshLayout.OnRefreshListener {
+class PussySearchFragment : Fragment(), PussySearchFragmentView, SwipeRefreshLayout.OnRefreshListener {
 
     companion object {
 
@@ -42,7 +42,7 @@ class PussySearchFragment : Fragment(), PussyListFragmentView, SwipeRefreshLayou
     private lateinit var retryBtn: Button
 
     private lateinit var presenter: PussySearchPresenter
-    private lateinit var adapter: SearchPussyListAdapter
+    private lateinit var adapter: PussyRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +65,7 @@ class PussySearchFragment : Fragment(), PussyListFragmentView, SwipeRefreshLayou
         pussyListView.layoutManager = LinearLayoutManager(context)
         pussyListView.itemAnimator = DefaultItemAnimator()
 
-        adapter = SearchPussyListAdapter(context!!, presenter)
+        adapter = PussyRecyclerViewAdapter(context!!, presenter)
         pussyListView.adapter = adapter
 
         pussyListView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
@@ -102,6 +102,10 @@ class PussySearchFragment : Fragment(), PussyListFragmentView, SwipeRefreshLayou
         super.onDestroy()
     }
 
+    override fun updatePussy(pussy: MyPussy) {
+        adapter.updateItem(pussy)
+    }
+
     override fun loadFragment() {
         Log.d("Test", "loading")
         flipper.displayedChild = LOAD_LAYOUT
@@ -131,10 +135,6 @@ class PussySearchFragment : Fragment(), PussyListFragmentView, SwipeRefreshLayou
 
     override fun addPussies(pussies: ArrayList<MyPussy>) {
         adapter.addItems(pussies)
-    }
-
-    override fun addPussy(pussy: MyPussy) {
-        // тут не используем, но если что можно добавлять по одной
     }
 
     override fun refresh() {

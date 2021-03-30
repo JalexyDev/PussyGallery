@@ -81,10 +81,25 @@ abstract class BaseRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.Vie
     override fun getItemCount() = items.size
 
     fun addItems(newItems: ArrayList<out Item>) {
+        val lastCount = items.count()
+
         items.addAll(newItems)
+        notifyItemRangeInserted(lastCount, newItems.count())
+    }
+
+    fun addItem(newItem: Item) {
+        items.add(newItem)
+        notifyItemInserted(items.count() - 1)
     }
 
     fun getItem(position: Int) = items[position]
+
+    fun updateItem(item: Item) {
+        val position = items.indexOf(item)
+        if (position == -1) return
+
+        items[position] = item
+    }
 
     fun removeItem(item: Item) {
         if (items.isNotEmpty() && items.contains(item)) {
@@ -99,6 +114,7 @@ abstract class BaseRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.Vie
 
     fun clearItems() {
         items.clear()
+        notifyDataSetChanged()
     }
 
     fun addLoader() {

@@ -36,4 +36,17 @@ data class MyPussy(
     fun setInFavorite(isInFavorite: Boolean) {
         isFavorite = if (isInFavorite) TRUE else FALSE
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is MyPussy) {
+            return false
+        } else if (pussyId == other.pussyId) {
+            return true
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return pussyId.hashCode()
+    }
 }
