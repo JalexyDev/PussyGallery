@@ -64,8 +64,8 @@ class PussyRepository {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
-    fun getFavoriteByIdOrPussyId(id: Int = -1, pussyId: String = ""): Observable<MyPussy> =
-        dbManager.getFavoritePussy(id, pussyId)
+    fun getFavoriteByIdOrPussyId(pussyId: String = ""): Observable<MyPussy> =
+        dbManager.getFavoritePussy(pussyId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 

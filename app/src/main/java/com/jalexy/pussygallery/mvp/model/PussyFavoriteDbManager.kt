@@ -16,8 +16,8 @@ class PussyFavoriteDbManager(private val databaseHandler: DatabaseHandler) {
     fun addPussyToFavorite(pussy: MyPussy) =
         Completable.fromAction { databaseHandler.addFavoritePussy(pussy)}
 
-    fun getFavoritePussy(id: Int, pussyId: String): Observable<MyPussy> =
-        Observable.just(databaseHandler.getFavoritePussy(id, pussyId))
+    fun getFavoritePussy(pussyId: String): Observable<MyPussy> =
+        Observable.just(databaseHandler.getFavoritePussy(pussyId))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 

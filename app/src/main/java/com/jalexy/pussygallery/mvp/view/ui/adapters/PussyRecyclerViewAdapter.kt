@@ -19,8 +19,8 @@ class PussyRecyclerViewAdapter(
     private val presenter: BasePresenter
 ) : BaseRecyclerViewAdapter() {
 
-    private val holders: ArrayList<PussyHolderView> by lazy {
-        ArrayList<PussyHolderView>()
+    private val holders: HashMap<String, PussyHolderView> by lazy {
+        HashMap<String, PussyHolderView>()
     }
 
     override fun onRetryClick() {
@@ -43,7 +43,9 @@ class PussyRecyclerViewAdapter(
         val position = items.indexOf(item)
         if (position == -1) return
 
-        holders[position].setPussyFavorite((item as MyPussy).isInFavorite())
+        if (item is MyPussy) {
+            holders[item.pussyId]?.setPussyFavorite(item.isInFavorite())
+        }
     }
 
     private inner class PussyHolder(itemView: View) :
@@ -55,7 +57,7 @@ class PussyRecyclerViewAdapter(
 
         fun bind(pussyItem: MyPussy) {
 
-            holders.add(this)
+            holders[pussyItem.pussyId] = this
 
             pussy = pussyItem
 

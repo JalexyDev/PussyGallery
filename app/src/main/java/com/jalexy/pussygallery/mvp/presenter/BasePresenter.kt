@@ -37,7 +37,7 @@ abstract class BasePresenter(protected open val fragmentView: PussyListFragmentV
 
     fun setFavoriteState(holder: PussyHolderView, pussy: MyPussy) {
         val disposable: Disposable =
-            repository.getFavoriteByIdOrPussyId(pussyId = pussy.pussyId)
+            repository.getFavoriteByIdOrPussyId(pussy.pussyId)
                 .subscribe(
                     {
                         if (it != MyPussy.EMPTY_PUSSY) {
@@ -66,7 +66,6 @@ abstract class BasePresenter(protected open val fragmentView: PussyListFragmentV
         val disposable: Disposable =
             completable
                 .doOnComplete {
-                    holder.setPussyFavorite(!isFavorite)
                     pussy.setInFavorite(!isFavorite)
 
                     if (isFavorite) {

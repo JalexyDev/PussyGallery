@@ -36,32 +36,26 @@ class DatabaseHandler(context: Context?) :
     }
 
     fun addFavoritePussy(pussy: MyPussy) {
-        val db = writableDatabase
+        val pussyWithSameIdInDb = getFavoritePussy(pussy.pussyId)
 
-        val contentValues = createPussyContentValues(pussy)
+        if (pussyWithSameIdInDb == MyPussy.EMPTY_PUSSY) {
+            val db = writableDatabase
+            val contentValues = createPussyContentValues(pussy)
 
-        db.insert(TABLE_NAME, null, contentValues)
-        db.close()
+            db.insert(TABLE_NAME, null, contentValues)
+            db.close()
+        } else {
+            throw Exception("${pussy.pussyId} already placed in PussyDB")
+        }
     }
 
-    fun getFavoritePussy(id: Int, pussyId: String): MyPussy {
+    fun getFavoritePussy(pussyId: String): MyPussy {
         val db = readableDatabase
-
-        val selection: String
-        val selValue: Array<String>
-
-        if (pussyId.isNullOrEmpty()) {
-            selection = "$KEY_ID=?"
-            selValue = arrayOf(id.toString())
-        } else {
-            selection = "$KEY_PUSSY_ID=?"
-            selValue = arrayOf(pussyId)
-        }
 
         val cursor = db.query(
             TABLE_NAME,
             arrayOf(KEY_ID, KEY_PUSSY_ID, KEY_SUB_ID, KEY_URL, KEY_IS_FAVORITE),
-            selection, selValue,
+            "$KEY_PUSSY_ID=?", arrayOf(pussyId),
             null, null, null, null
         )
 
