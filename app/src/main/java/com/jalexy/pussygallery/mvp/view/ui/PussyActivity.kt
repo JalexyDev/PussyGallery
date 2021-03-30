@@ -1,8 +1,11 @@
 package com.jalexy.pussygallery.mvp.view.ui
 
+import android.Manifest
 import android.app.DownloadManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.Menu
@@ -24,11 +27,14 @@ class PussyActivity : AppCompatActivity() {
 
     companion object {
         const val IMAGE_URL = "IMAGE_URL"
+
+        private const val PERMISSION_REQUEST_CODE = 123
     }
 
     private var imageUrl: String? = ""
     private var disposable: Disposable? = null
     private var loadingImage = false
+    private var allowLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +48,12 @@ class PussyActivity : AppCompatActivity() {
             intent.getStringExtra(IMAGE_URL)
         } else {
             savedInstanceState.getString(IMAGE_URL)
+        }
+
+        if (hasPermissions()) {
+            allowLoading = true
+        } else {
+            requestPerms()
         }
     }
 
@@ -58,8 +70,9 @@ class PussyActivity : AppCompatActivity() {
         outState.putString(IMAGE_URL, imageUrl)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.pussy_activity_menu, menu)
+        menu.findItem(R.id.save_image).isVisible = allowLoading
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -115,5 +128,46 @@ class PussyActivity : AppCompatActivity() {
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, imageFileName)
         downloadManager.enqueue(request)
+    }
+
+    private fun hasPermissions(): Boolean {
+        var res = 0
+        //string array of permissions,
+        val permissions = arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        for (perms in permissions) {
+            res = checkCallingOrSelfPermission(perms)
+            if (res != PackageManager.PERMISSION_GRANTED) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun requestPerms() {
+        val permissions = arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissions, PERMISSION_REQUEST_CODE)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> for (res in grantResults) {
+                // if user granted all permissions.
+                allowLoading = res == PackageManager.PERMISSION_GRANTED
+            }
+            else ->                 // if user not granted permissions.
+                allowLoading = false
+        }
+
+        if (allowLoading) {
+            invalidateOptionsMenu()
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

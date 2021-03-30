@@ -107,7 +107,7 @@ class DatabaseHandler(context: Context?) :
 
     fun deletePussyFromFavorites(pussy: MyPussy) {
         val db = writableDatabase
-        db.delete(TABLE_NAME, "$KEY_ID=?", arrayOf(pussy.id.toString()))
+        db.delete(TABLE_NAME, "$KEY_PUSSY_ID=?", arrayOf(pussy.pussyId))
         db.close()
     }
 

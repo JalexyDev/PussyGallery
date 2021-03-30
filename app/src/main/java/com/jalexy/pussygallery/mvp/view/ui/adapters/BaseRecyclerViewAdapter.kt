@@ -94,13 +94,6 @@ abstract class BaseRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.Vie
 
     fun getItem(position: Int) = items[position]
 
-    fun updateItem(item: Item) {
-        val position = items.indexOf(item)
-        if (position == -1) return
-
-        items[position] = item
-    }
-
     fun removeItem(item: Item) {
         if (items.isNotEmpty() && items.contains(item)) {
             val position = items.indexOf(item)

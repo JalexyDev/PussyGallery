@@ -39,6 +39,13 @@ class PussyRecyclerViewAdapter(
         }
     }
 
+    fun updateItem(item: Item) {
+        val position = items.indexOf(item)
+        if (position == -1) return
+
+        holders[position].setPussyFavorite((item as MyPussy).isInFavorite())
+    }
+
     private inner class PussyHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView), PussyHolderView {
 
@@ -47,6 +54,8 @@ class PussyRecyclerViewAdapter(
         private val favoriteBtn = itemView.favorite_btn
 
         fun bind(pussyItem: MyPussy) {
+
+            holders.add(this)
 
             pussy = pussyItem
 
