@@ -3,10 +3,10 @@ package com.jalexy.pussygallery.mvp.presenter
 import android.util.Log
 import com.jalexy.pussygallery.mvp.model.PussyRepository
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
+import com.jalexy.pussygallery.mvp.model.entities.MyPussy.Companion.FALSE
 import com.jalexy.pussygallery.mvp.view.PussyHolderView
 import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class PussySearchPresenter(val fragmentView: PussyListFragmentView) : BasePresenter() {
@@ -29,24 +29,21 @@ class PussySearchPresenter(val fragmentView: PussyListFragmentView) : BasePresen
         isFree = false
 
         val disposable: Disposable = repository.getImages(page = page)
-            .unsubscribeOn(Schedulers.io())
-            .subscribe({ list ->
+            .subscribe(
+                { list ->
+                    val portion = list.map {
+                        MyPussy(it.id, it.subId ?: "", it.url, FALSE)
+                    }
 
-                val portion = list.map {
-                    //todo узнать, находится ли эта киска в избранном. И установить значение isFavorite
-                    MyPussy(it.id, it.subId ?: "", it.url, 0)
-                }
+                    myPussyItemsCache.addAll(portion)
 
-                myPussyItemsCache.addAll(portion)
-
-                fragmentView.addPussies(portion as ArrayList<MyPussy>)
-                fragmentView.finishLoading()
-                isFree = true
-
-            },
+                    fragmentView.addPussies(portion as ArrayList<MyPussy>)
+                    fragmentView.finishLoading()
+                    isFree = true
+                },
                 { throwable ->
                     Log.e("get request ", throwable?.message ?: "PUK")
-                    fragmentView.showError()
+                    fragmentView?.showError()
                 })
 
         unsubscribeOnDestroy(disposable)
@@ -71,21 +68,44 @@ class PussySearchPresenter(val fragmentView: PussyListFragmentView) : BasePresen
         }
     }
 
-    fun favoriteClicked(holder: PussyHolderView, pussy: MyPussy) {
-        //todo если все норм, добавить избранную фотку в БД
+    fun setFavoriteState(holder: PussyHolderView, pussy: MyPussy) {
+        val disposable: Disposable =
+            repository.getFavoriteByIdOrPussyId(pussyId = pussy.pussyId)
+                .subscribe(
+                    {
+                        if (it != MyPussy.EMPTY_PUSSY) {
+                            holder.setPussyFavorite(it != null)
+                            pussy.setInFavorite(it != null)
+                        } else {
+                            holder.setPussyFavorite(false)
+                        }
+                    },
+                    {
+                        holder?.setPussyFavorite(false)
+                    })
 
-//        val disposable: Disposable = repository.addToFavorite(pussy.pussyId)
-//            .unsubscribeOn(Schedulers.io())
-//            .subscribe({ okResponse ->
-//                Log.d("Test", okResponse.message)
-//
-//                holder.setPussyFavorite(!pussy.isFavorite)
-//            },
-//                { throwable ->
-//                    Log.e("Test", throwable?.message ?: "PUK")
-//                })
-//
-//        unsubscribeOnDestroy(disposable)
+        unsubscribeOnDestroy(disposable)
+    }
+
+    fun favoriteClicked(holder: PussyHolderView, pussy: MyPussy) {
+        val isFavorite = pussy.isInFavorite()
+
+        val completable = if (isFavorite) {
+            repository.deleteFavorite(pussy)
+        } else {
+            repository.addToFavorite(pussy)
+        }
+
+        val disposable: Disposable =
+            completable
+                .doOnComplete {
+                    holder.setPussyFavorite(!isFavorite)
+                    pussy.setInFavorite(!isFavorite)
+                }
+                .doOnError { holder?.setPussyFavorite(isFavorite) }
+                .subscribe()
+
+        unsubscribeOnDestroy(disposable)
     }
 
     fun retryLoad() {

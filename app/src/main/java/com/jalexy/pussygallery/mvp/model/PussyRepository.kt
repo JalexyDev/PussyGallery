@@ -2,6 +2,9 @@ package com.jalexy.pussygallery.mvp.model
 
 import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.mvp.model.entities.Image
+import com.jalexy.pussygallery.mvp.model.entities.MyPussy
+import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -10,6 +13,9 @@ import javax.inject.Inject
 class PussyRepository {
     @Inject
     lateinit var apiManager: PussyApiManager
+
+    @Inject
+    lateinit var dbManager: PussyFavoriteDbManager
 
     init {
         PussyApplication.appComponent.inject(this)
@@ -26,18 +32,23 @@ class PussyRepository {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
+    fun getFavorites(): Flowable<ArrayList<MyPussy>> =
+        dbManager.getAllFavorites()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 
-//    fun getFavorites(): Flowable<ArrayList<MyPussy>> =
-//        pussyDb.pussyDao().getAll()
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//
-//    fun getFavoritesBetween(start: Int, end: Int): Observable<ArrayList<MyPussy>> =
-//        pussyDb.pussyDao().getPussiesBetween(start, end)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//
-//    fun addToFavorite(pussy: MyPussy) = Completable.fromAction { pussyDb.pussyDao().insert(pussy) }
-//
-//    fun deleteFavorite(pussy: MyPussy) = Completable.fromAction { pussyDb.pussyDao().delete(pussy) }
+    fun getFavoriteByIdOrPussyId(id: Int = -1, pussyId: String = ""): Observable<MyPussy> =
+        dbManager.getFavoritePussy(id, pussyId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+
+    fun addToFavorite(pussy: MyPussy): Completable =
+        dbManager.addPussyToFavorite(pussy)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+
+    fun deleteFavorite(pussy: MyPussy): Completable =
+        dbManager.deletePussyFromFavorite(pussy)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 }

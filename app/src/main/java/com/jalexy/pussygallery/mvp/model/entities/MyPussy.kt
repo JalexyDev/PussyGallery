@@ -12,11 +12,16 @@ data class MyPussy(
     private var isFavorite: Int
 ) : Item {
 
+    constructor() : this(-1, "", "", "", 0)
+
     constructor(pussyId: String, subId: String, url: String, isFavorite: Int) :
             this(-1, pussyId, subId, url, isFavorite)
 
     companion object {
         const val TRUE = 1
+        const val FALSE = 0
+
+        val EMPTY_PUSSY: MyPussy = MyPussy()
     }
 
 
@@ -26,5 +31,9 @@ data class MyPussy(
 
     fun isInFavorite() : Boolean{
         return isFavorite == TRUE
+    }
+
+    fun setInFavorite(isInFavorite: Boolean) {
+        isFavorite = if (isInFavorite) TRUE else FALSE
     }
 }

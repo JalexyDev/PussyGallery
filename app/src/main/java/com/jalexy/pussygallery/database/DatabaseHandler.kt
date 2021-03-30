@@ -3,6 +3,7 @@ package com.jalexy.pussygallery.database
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.CursorIndexOutOfBoundsException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.jalexy.pussygallery.database.DbParams.DATABASE_VERSION
@@ -15,7 +16,7 @@ import com.jalexy.pussygallery.database.DbParams.KEY_URL
 import com.jalexy.pussygallery.database.DbParams.TABLE_NAME
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 
-class DatabaseHandler( context: Context?) :
+class DatabaseHandler(context: Context?) :
     SQLiteOpenHelper(context, DB_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -43,14 +44,25 @@ class DatabaseHandler( context: Context?) :
         db.close()
     }
 
-    fun getPussy(id: Int): MyPussy? {
+    fun getFavoritePussy(id: Int, pussyId: String): MyPussy {
         val db = readableDatabase
+
+        val selection: String
+        val selValue: Array<String>
+
+        if (pussyId.isNullOrEmpty()) {
+            selection = "$KEY_ID=?"
+            selValue = arrayOf(id.toString())
+        } else {
+            selection = "$KEY_PUSSY_ID=?"
+            selValue = arrayOf(pussyId)
+        }
 
         val cursor = db.query(
             TABLE_NAME,
             arrayOf(KEY_ID, KEY_PUSSY_ID, KEY_SUB_ID, KEY_URL, KEY_IS_FAVORITE),
-            "$KEY_ID=?",
-            arrayOf(id.toString()), null, null, null, null
+            selection, selValue,
+            null, null, null, null
         )
 
         var pussy: MyPussy? = null
@@ -64,21 +76,25 @@ class DatabaseHandler( context: Context?) :
 
         db.close()
 
-        return pussy
+        return pussy ?: MyPussy.EMPTY_PUSSY
     }
 
-    fun getAllPussies(): ArrayList<MyPussy> {
+    fun getAllFavorites(): ArrayList<MyPussy> {
         val db = readableDatabase
         val pussiesList = ArrayList<MyPussy>()
 
         val selectAllPussies = "SELECT * FROM $TABLE_NAME"
         val cursor = db.rawQuery(selectAllPussies, null)
 
-        cursor?.let {
+        cursor?.let { it ->
             if (it.moveToFirst()) {
                 it.use { cur ->
+                    var pussy: MyPussy?
+
                     do {
-                        pussiesList.add(createPussyFromCursor(cur))
+                        pussy = createPussyFromCursor(cur)
+                        pussy?.let { pussiesList.add(pussy) }
+
                     } while (cur.moveToNext())
                 }
             }
@@ -89,7 +105,7 @@ class DatabaseHandler( context: Context?) :
         return pussiesList
     }
 
-    fun deletePussyFromFavorite(pussy: MyPussy) {
+    fun deletePussyFromFavorites(pussy: MyPussy) {
         val db = writableDatabase
         db.delete(TABLE_NAME, "$KEY_ID=?", arrayOf(pussy.id.toString()))
         db.close()
@@ -104,13 +120,16 @@ class DatabaseHandler( context: Context?) :
         }
 
 
-    private fun createPussyFromCursor(cursor: Cursor): MyPussy {
-        return MyPussy(
-            cursor.getInt(0),
-            cursor.getString(1),
-            cursor.getString(2),
-            cursor.getString(3),
-            cursor.getInt(4)
-        )
+    private fun createPussyFromCursor(cursor: Cursor): MyPussy? {
+        return try {
+            MyPussy(
+                cursor.getInt(0),
+                cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getInt(4))
+        } catch (e: CursorIndexOutOfBoundsException) {
+            null
+        }
     }
 }

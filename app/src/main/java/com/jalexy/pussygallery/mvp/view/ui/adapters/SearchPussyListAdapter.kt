@@ -52,14 +52,13 @@ class SearchPussyListAdapter(
                 .into(image)
 
             image.setOnClickListener{
-                //todo переход к просмотру фотки
                 context.startActivity(
                     Intent(context, PussyActivity::class.java).apply {
                         putExtra(PussyActivity.IMAGE_URL, pussy.url)
                     })
             }
 
-            setPussyFavorite(pussy.isInFavorite())
+            presenter.setFavoriteState(this, pussy)
 
             favoriteBtn.setOnClickListener {
                 it.isEnabled = false
@@ -75,8 +74,6 @@ class SearchPussyListAdapter(
                     R.drawable.selector_favorite_enable
             )
 
-            //TODO добавлять/удалять киску из БД в зависимости от прошлого значения isFavorite
-//            pussy.isFavorite = isFavorite
             favoriteBtn.isEnabled = true
         }
     }

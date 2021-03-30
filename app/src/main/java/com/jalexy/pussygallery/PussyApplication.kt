@@ -8,6 +8,7 @@ import com.jalexy.pussygallery.di.components.DaggerRepositoryComponent
 import com.jalexy.pussygallery.di.components.RepositoryComponent
 import com.jalexy.pussygallery.di.modules.AppModule
 import com.jalexy.pussygallery.di.modules.PussyApiModule
+import com.jalexy.pussygallery.di.modules.PussyDbModule
 import com.jalexy.pussygallery.di.modules.PussyRepositoryModule
 import com.jalexy.pussygallery.mvp.model.PussyRepository
 
@@ -32,6 +33,7 @@ class PussyApplication : MultiDexApplication() {
         appComponent = DaggerAppComponent.builder()
             .appModule(AppModule(this))
             .pussyApiModule(PussyApiModule(BASE_PUSSY_URL))
+            .pussyDbModule(PussyDbModule())
             .build()
 
         repositoryComponent = DaggerRepositoryComponent.builder()
