@@ -59,7 +59,7 @@ class SearchPussyListAdapter(
                     })
             }
 
-            setPussyFavorite(pussy.isFavorite)
+            setPussyFavorite(pussy.isInFavorite())
 
             favoriteBtn.setOnClickListener {
                 it.isEnabled = false
@@ -75,7 +75,8 @@ class SearchPussyListAdapter(
                     R.drawable.selector_favorite_enable
             )
 
-            pussy.isFavorite = isFavorite
+            //TODO добавлять/удалять киску из БД в зависимости от прошлого значения isFavorite
+//            pussy.isFavorite = isFavorite
             favoriteBtn.isEnabled = true
         }
     }

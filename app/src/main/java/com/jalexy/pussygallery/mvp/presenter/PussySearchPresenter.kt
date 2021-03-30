@@ -34,7 +34,7 @@ class PussySearchPresenter(val fragmentView: PussyListFragmentView) : BasePresen
 
                 val portion = list.map {
                     //todo узнать, находится ли эта киска в избранном. И установить значение isFavorite
-                    MyPussy(it.id, it.subId, it.url, false)
+                    MyPussy(it.id, it.subId ?: "", it.url, 0)
                 }
 
                 myPussyItemsCache.addAll(portion)

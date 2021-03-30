@@ -5,13 +5,26 @@ import com.jalexy.pussygallery.mvp.view.ui.adapters.ItemType
 
 // класс для списков кисок и хранения избранного в БД
 data class MyPussy(
-    val pussyId: String,
-    val subId: String?,
-    val url: String,
-    var isFavorite: Boolean
-    ) : Item {
+    var id: Int,
+    var pussyId: String,
+    var subId: String,
+    var url: String,
+    private var isFavorite: Int
+) : Item {
+
+    constructor(pussyId: String, subId: String, url: String, isFavorite: Int) :
+            this(-1, pussyId, subId, url, isFavorite)
+
+    companion object {
+        const val TRUE = 1
+    }
+
 
     override fun getType(): ItemType {
         return ItemType.ITEM
+    }
+
+    fun isInFavorite() : Boolean{
+        return isFavorite == TRUE
     }
 }
