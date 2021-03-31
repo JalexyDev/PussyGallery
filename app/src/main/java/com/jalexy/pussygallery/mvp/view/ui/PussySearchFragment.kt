@@ -1,5 +1,6 @@
 package com.jalexy.pussygallery.mvp.view.ui
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.ViewFlipper
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -18,12 +21,14 @@ import com.jalexy.pussygallery.R
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.presenter.PussySearchPresenter
 import com.jalexy.pussygallery.mvp.view.PussySearchFragmentView
+import com.jalexy.pussygallery.mvp.view.ui.adapters.BaseRecyclerViewAdapter
 import com.jalexy.pussygallery.mvp.view.ui.adapters.PussyRecyclerViewAdapter
 import kotlinx.android.synthetic.main.fragment_image_list.view.*
 import javax.inject.Inject
 
 
-class PussySearchFragment : Fragment(), PussySearchFragmentView, SwipeRefreshLayout.OnRefreshListener {
+class PussySearchFragment : Fragment(), PussySearchFragmentView,
+    SwipeRefreshLayout.OnRefreshListener {
 
     companion object {
 
@@ -63,17 +68,43 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView, SwipeRefreshLay
 
         refresher = root.refresher
         refresher.setOnRefreshListener(this)
+        refresher.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary)
 
         flipper = root.flipper
 
         pussyListView = root.pussy_list
-        pussyListView.layoutManager = LinearLayoutManager(context)
+
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            //todo разные лейаут менеджеры и убрать тулбар и строку состояния
+
+            (activity as AppCompatActivity).supportActionBar?.hide()
+
+            val layoutManager = GridLayoutManager(context, 2)
+            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return when (adapter?.getItemViewType(position)) {
+                        BaseRecyclerViewAdapter.LOADER_TYPE, BaseRecyclerViewAdapter.LOAD_ERROR_TYPE -> 2
+                        else -> 1
+                    }
+                }
+            }
+
+            pussyListView.layoutManager = layoutManager
+
+        } else {
+            (activity as AppCompatActivity).supportActionBar?.show()
+
+            pussyListView.layoutManager = LinearLayoutManager(context)
+        }
+
+
         pussyListView.itemAnimator = DefaultItemAnimator()
 
         adapter = PussyRecyclerViewAdapter(context!!, presenter)
         pussyListView.adapter = adapter
 
-        pussyListView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+        pussyListView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
@@ -81,7 +112,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView, SwipeRefreshLay
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItemPos = layoutManager.findLastVisibleItemPosition()
 
-                if (lastVisibleItemPos == totalItemCount - 1 && !adapter.hasError()){
+                if (lastVisibleItemPos == totalItemCount - 1 && !adapter.hasError()) {
                     presenter.scrolledToEnd()
                 }
             }

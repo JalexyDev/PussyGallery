@@ -16,6 +16,7 @@
 
         <activity
             android:name=".mvp.view.ui.PussyActivity"
+            android:theme="@style/TransparentActionBar"
             android:parentActivityName=".mvp.view.ui.MainActivity">
         </activity>
 
