@@ -2,7 +2,6 @@ package com.jalexy.pussygallery.mvp.view.ui
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,6 +51,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
     private lateinit var retryBtn: Button
 
     private lateinit var adapter: PussyRecyclerViewAdapter
+    private var wasLoaded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,10 +76,6 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
 
         val orientation = resources.configuration.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            //todo разные лейаут менеджеры и убрать тулбар и строку состояния
-
-            (activity as AppCompatActivity).supportActionBar?.hide()
-
             val layoutManager = GridLayoutManager(context, 2)
             layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
@@ -129,7 +125,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
 
     override fun onStart() {
         super.onStart()
-        presenter.fragmentStarted()
+        presenter.fragmentStarted(wasLoaded)
     }
 
     override fun onDestroy() {
@@ -143,7 +139,6 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
     }
 
     override fun loadFragment() {
-        Log.d("Test", "loading")
         flipper.displayedChild = LOAD_LAYOUT
     }
 
@@ -162,7 +157,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
     }
 
     override fun finishLoading() {
-        Log.d("Test", "finished load")
+        wasLoaded = true
 
         flipper.displayedChild = CONTENT_LAYOUT
 
@@ -175,7 +170,8 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
 
     override fun refresh() {
         adapter.clearItems()
-        presenter.fragmentStarted()
+        wasLoaded = false
+        presenter.fragmentStarted(wasLoaded)
     }
 
     override fun onRefresh() {

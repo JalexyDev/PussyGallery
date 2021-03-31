@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".mvp.view.ui.MainActivity"
-    android:background="@drawable/background_list_fragment"
+    android:background="@color/mainBackground"
     >
 
     <com.google.android.material.appbar.AppBarLayout

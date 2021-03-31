@@ -2,7 +2,6 @@ package com.jalexy.pussygallery.mvp.view.ui
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,13 +25,15 @@ import kotlinx.android.synthetic.main.fragment_image_list.view.*
 import javax.inject.Inject
 
 
-class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView, SwipeRefreshLayout.OnRefreshListener {
+class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView,
+    SwipeRefreshLayout.OnRefreshListener {
 
     companion object {
 
         private const val LOAD_LAYOUT = 0
         private const val CONTENT_LAYOUT = 1
         private const val ERROR_LAYOUT = 2
+        private const val EMPTY_LAYOUT = 3
 
         @JvmStatic
         fun newInstance(): PussyFavoriteFragment {
@@ -41,7 +42,7 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView, SwipeRefres
     }
 
     @Inject
-    protected lateinit var  presenter: PussyFavoritePresenter
+    protected lateinit var presenter: PussyFavoritePresenter
 
     private lateinit var refresher: SwipeRefreshLayout
     private lateinit var flipper: ViewFlipper
@@ -51,6 +52,7 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView, SwipeRefres
 
     private lateinit var adapter: PussyRecyclerViewAdapter
 
+    private var wasLoaded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +61,8 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView, SwipeRefres
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_image_list, container, false)
 
@@ -74,8 +76,6 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView, SwipeRefres
 
         val orientation = resources.configuration.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            //todo разные лейаут менеджеры и убрать тулбар и строку состояния
-
             val layoutManager = GridLayoutManager(context, 2)
             layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
@@ -109,7 +109,7 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView, SwipeRefres
 
     override fun onStart() {
         super.onStart()
-        presenter.fragmentStarted()
+        presenter.fragmentStarted(wasLoaded)
     }
 
     override fun onDestroy() {
@@ -119,7 +119,6 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView, SwipeRefres
     }
 
     override fun loadFragment() {
-        Log.d("Test", "loading")
         flipper.displayedChild = LOAD_LAYOUT
     }
 
@@ -138,9 +137,13 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView, SwipeRefres
     }
 
     override fun finishLoading() {
-        Log.d("Test", "finished load")
+        wasLoaded = true
 
-        flipper.displayedChild = CONTENT_LAYOUT
+        flipper.displayedChild = if (adapter.isEmpty()) {
+            EMPTY_LAYOUT
+        } else {
+            CONTENT_LAYOUT
+        }
 
         adapter.removeLoader()
     }
@@ -151,15 +154,24 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView, SwipeRefres
 
     override fun addPussy(pussy: MyPussy) {
         adapter.addItem(pussy)
+
+        if (adapter.isEmpty().not()) {
+            flipper.displayedChild = CONTENT_LAYOUT
+        }
     }
 
     override fun removePussy(pussy: MyPussy) {
         adapter.removeItem(pussy)
+
+        if (adapter.isEmpty()) {
+            flipper.displayedChild = EMPTY_LAYOUT
+        }
     }
 
     override fun refresh() {
         adapter.clearItems()
-        presenter.fragmentStarted()
+        wasLoaded = false
+        presenter.fragmentStarted(wasLoaded)
     }
 
     override fun onRefresh() {

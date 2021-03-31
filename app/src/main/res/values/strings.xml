@@ -7,4 +7,5 @@
     <string name="retry">Повторить</string>
     <string name="cant_load_items">Не грузит =(</string>
     <string name="pussy_info">Информация о киске</string>
+    <string name="pussy_list_is_empty">Нет избранных кисок</string>
 </resources>

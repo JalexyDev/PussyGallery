@@ -61,21 +61,40 @@
                     android:layout_gravity="center_horizontal"
                     android:text="@string/cant_download_pussies"
                     android:textAlignment="center"
-                    android:textColor="@color/grey"
-                    android:textSize="16sp" />
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20sp" />
 
                 <Button
                     android:id="@+id/retry_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/button_text_padding"
                     android:layout_gravity="center_horizontal"
                     android:text="@string/retry"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:background="@drawable/selector_simple_btn"
+                    android:textSize="20sp"
                     android:textStyle="bold"/>
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/big_bottom_margin"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/pussy_list_is_empty"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
 
         </ViewFlipper>
 
