@@ -43,6 +43,7 @@ class PussySearchPresenter() : BasePresenter<PussySearchFragmentView>() {
                 },
                 { throwable ->
                     Log.e("get request ", throwable?.message ?: "PUK")
+                    fragmentView.finishLoading()
                     fragmentView?.showError()
                     isFree = true
                 })
@@ -51,7 +52,7 @@ class PussySearchPresenter() : BasePresenter<PussySearchFragmentView>() {
     }
 
     override fun retryLoad() {
-        //todo повторить последний запрос
+        getPussies()
     }
 
     // подгрузка если долистал до конца

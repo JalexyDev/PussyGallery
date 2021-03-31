@@ -58,7 +58,7 @@ class PussyFavoritePresenter() : BasePresenter<PussyFavoriteFragmentView>() {
     }
 
     override fun retryLoad() {
-        //todo повторить последний запрос
+        getPussies()
     }
 
 }
