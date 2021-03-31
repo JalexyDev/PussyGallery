@@ -11,9 +11,10 @@ import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-abstract class BasePresenter(protected open val fragmentView: PussyListFragmentView) : DbChangeListener{
+abstract class BasePresenter<View: PussyListFragmentView>() : DbChangeListener{
 
     abstract var repository: PussyRepository
+    protected abstract var fragmentView: View
     protected lateinit var myPussyItemsCache: ArrayList<MyPussy>
     protected var isFree = true
 
@@ -22,6 +23,10 @@ abstract class BasePresenter(protected open val fragmentView: PussyListFragmentV
     abstract fun retryLoad()
 
     protected abstract fun getPussies()
+
+    fun setView(view: View) {
+        fragmentView = view
+    }
 
     fun fragmentOpened() {
         fragmentView.loadFragment()
@@ -32,6 +37,7 @@ abstract class BasePresenter(protected open val fragmentView: PussyListFragmentV
             getPussies()
         } else {
             fragmentView.addPussies(myPussyItemsCache)
+            fragmentView.finishLoading()
         }
     }
 

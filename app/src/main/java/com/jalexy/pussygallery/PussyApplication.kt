@@ -2,10 +2,7 @@ package com.jalexy.pussygallery
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
-import com.jalexy.pussygallery.di.components.AppComponent
-import com.jalexy.pussygallery.di.components.DaggerAppComponent
-import com.jalexy.pussygallery.di.components.DaggerRepositoryComponent
-import com.jalexy.pussygallery.di.components.RepositoryComponent
+import com.jalexy.pussygallery.di.components.*
 import com.jalexy.pussygallery.di.modules.AppModule
 import com.jalexy.pussygallery.di.modules.PussyApiModule
 import com.jalexy.pussygallery.di.modules.PussyDbModule
@@ -24,20 +21,27 @@ class PussyApplication : MultiDexApplication() {
         var USER_ID: String? = null
         lateinit var appComponent: AppComponent
         lateinit var repositoryComponent: RepositoryComponent
+        lateinit var fragmentComponent: FragmentComponent
 
     }
 
     override fun onCreate() {
         super.onCreate()
 
+        val appModule = AppModule(this)
+
         appComponent = DaggerAppComponent.builder()
-            .appModule(AppModule(this))
+            .appModule(appModule)
             .pussyApiModule(PussyApiModule(BASE_PUSSY_URL))
             .pussyDbModule(PussyDbModule())
             .build()
 
         repositoryComponent = DaggerRepositoryComponent.builder()
             .pussyRepositoryModule(PussyRepositoryModule(PussyRepository()))
+            .build()
+
+        fragmentComponent = DaggerFragmentComponent.builder()
+            .appModule(appModule)
             .build()
 
         val sharedPreferences = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)

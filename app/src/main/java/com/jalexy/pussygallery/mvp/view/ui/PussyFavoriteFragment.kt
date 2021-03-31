@@ -13,12 +13,14 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.R
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.presenter.PussyFavoritePresenter
 import com.jalexy.pussygallery.mvp.view.PussyFavoriteFragmentView
 import com.jalexy.pussygallery.mvp.view.ui.adapters.PussyRecyclerViewAdapter
 import kotlinx.android.synthetic.main.fragment_image_list.view.*
+import javax.inject.Inject
 
 
 class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView, SwipeRefreshLayout.OnRefreshListener {
@@ -35,19 +37,22 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView, SwipeRefres
         }
     }
 
+    @Inject
+    protected lateinit var  presenter: PussyFavoritePresenter
+
     private lateinit var refresher: SwipeRefreshLayout
     private lateinit var flipper: ViewFlipper
     private lateinit var pussyListView: RecyclerView
     private lateinit var errorText: TextView
     private lateinit var retryBtn: Button
 
-    private lateinit var  presenter: PussyFavoritePresenter
     private lateinit var adapter: PussyRecyclerViewAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = PussyFavoritePresenter(this)
+        PussyApplication.fragmentComponent.inject(this)
+        presenter.setView(this)
     }
 
     override fun onCreateView(

@@ -8,11 +8,12 @@ import com.jalexy.pussygallery.mvp.view.PussySearchFragmentView
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
-class PussySearchPresenter(override val fragmentView: PussySearchFragmentView) : BasePresenter(fragmentView) {
+class PussySearchPresenter() : BasePresenter<PussySearchFragmentView>() {
 
     @Inject
     override lateinit var repository: PussyRepository
 
+    override lateinit var fragmentView: PussySearchFragmentView
     // для задания полная форма бесполезна, но если надо, то вот она
     // private var imageItemsCash: ArrayList<Image>
 
@@ -68,14 +69,24 @@ class PussySearchPresenter(override val fragmentView: PussySearchFragmentView) :
     }
 
     override fun removed(pussy: MyPussy) {
+        updateCachedPussyIsFavorite(pussy, false)
         fragmentView.updatePussy(pussy)
     }
 
     override fun added(pussy: MyPussy) {
+        updateCachedPussyIsFavorite(pussy, true)
         fragmentView.updatePussy(pussy)
     }
 
     override fun registerOnUpdates() {
         repository.addDbChangeListener(this)
+    }
+
+    private fun updateCachedPussyIsFavorite(pussy: MyPussy, isFavorite: Boolean) {
+        val cachedPos = myPussyItemsCache.indexOf(pussy)
+
+        if (cachedPos != -1) {
+            myPussyItemsCache[cachedPos].setInFavorite(isFavorite)
+        }
     }
 }

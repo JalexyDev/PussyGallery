@@ -11,12 +11,13 @@ import com.jalexy.pussygallery.R
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.presenter.BasePresenter
 import com.jalexy.pussygallery.mvp.view.PussyHolderView
+import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
 import com.jalexy.pussygallery.mvp.view.ui.PussyActivity
 import kotlinx.android.synthetic.main.holder_pussy.view.*
 
 class PussyRecyclerViewAdapter(
     private val context: Context,
-    private val presenter: BasePresenter
+    private val presenter: BasePresenter<out PussyListFragmentView>
 ) : BaseRecyclerViewAdapter() {
 
     private val holders: HashMap<String, PussyHolderView> by lazy {

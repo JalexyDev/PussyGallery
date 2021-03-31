@@ -9,10 +9,12 @@ import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 
-class PussyFavoritePresenter(override val fragmentView: PussyFavoriteFragmentView) : BasePresenter(fragmentView) {
+class PussyFavoritePresenter() : BasePresenter<PussyFavoriteFragmentView>() {
 
     @Inject
     override lateinit var repository: PussyRepository
+
+    override lateinit var fragmentView: PussyFavoriteFragmentView
 
     init {
         getRepositoryComponent().inject(this)
@@ -42,10 +44,12 @@ class PussyFavoritePresenter(override val fragmentView: PussyFavoriteFragmentVie
     }
 
     override fun removed(pussy: MyPussy) {
+        myPussyItemsCache.remove(pussy)
         fragmentView.removePussy(pussy)
     }
 
     override fun added(pussy: MyPussy) {
+        myPussyItemsCache.add(pussy)
         fragmentView.addPussy(pussy)
     }
 
