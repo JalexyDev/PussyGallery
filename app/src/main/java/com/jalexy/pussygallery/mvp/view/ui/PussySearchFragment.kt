@@ -19,6 +19,7 @@ import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.R
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.presenter.PussySearchPresenter
+import com.jalexy.pussygallery.mvp.view.PussyHolderView
 import com.jalexy.pussygallery.mvp.view.PussySearchFragmentView
 import com.jalexy.pussygallery.mvp.view.ui.adapters.BaseRecyclerViewAdapter
 import com.jalexy.pussygallery.mvp.view.ui.adapters.PussyRecyclerViewAdapter
@@ -51,7 +52,6 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
     private lateinit var retryBtn: Button
 
     private lateinit var adapter: PussyRecyclerViewAdapter
-    private var wasLoaded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,7 +97,13 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
 
         pussyListView.itemAnimator = DefaultItemAnimator()
 
-        adapter = PussyRecyclerViewAdapter(context!!, presenter)
+        adapter = PussyRecyclerViewAdapter(
+            context,
+            { presenter.retryLoad() },
+            { holder: PussyHolderView, pussy: MyPussy -> presenter.setFavoriteState(holder, pussy) },
+            { holder: PussyHolderView, pussy: MyPussy -> presenter.favoriteClicked(holder, pussy) }
+        )
+
         pussyListView.adapter = adapter
 
         pussyListView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -125,7 +131,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
 
     override fun onStart() {
         super.onStart()
-        presenter.fragmentStarted(wasLoaded)
+        presenter.fragmentStarted(adapter.itemCount > 0)
     }
 
     override fun onDestroy() {
@@ -157,10 +163,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
     }
 
     override fun finishLoading() {
-        wasLoaded = true
-
         flipper.displayedChild = CONTENT_LAYOUT
-
         adapter.removeLoader()
     }
 
@@ -170,8 +173,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
 
     override fun refresh() {
         adapter.clearItems()
-        wasLoaded = false
-        presenter.fragmentStarted(wasLoaded)
+        presenter.fragmentStarted(false)
     }
 
     override fun onRefresh() {

@@ -19,6 +19,7 @@ import com.jalexy.pussygallery.R
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.presenter.PussyFavoritePresenter
 import com.jalexy.pussygallery.mvp.view.PussyFavoriteFragmentView
+import com.jalexy.pussygallery.mvp.view.PussyHolderView
 import com.jalexy.pussygallery.mvp.view.ui.adapters.BaseRecyclerViewAdapter
 import com.jalexy.pussygallery.mvp.view.ui.adapters.PussyRecyclerViewAdapter
 import kotlinx.android.synthetic.main.fragment_image_list.view.*
@@ -29,7 +30,6 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView,
     SwipeRefreshLayout.OnRefreshListener {
 
     companion object {
-
         private const val LOAD_LAYOUT = 0
         private const val CONTENT_LAYOUT = 1
         private const val ERROR_LAYOUT = 2
@@ -51,8 +51,6 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView,
     private lateinit var retryBtn: Button
 
     private lateinit var adapter: PussyRecyclerViewAdapter
-
-    private var wasLoaded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,7 +93,13 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView,
 
         pussyListView.itemAnimator = DefaultItemAnimator()
 
-        adapter = PussyRecyclerViewAdapter(context!!, presenter)
+        adapter = PussyRecyclerViewAdapter(
+            context,
+            {presenter.retryLoad()},
+            {holder: PussyHolderView, pussy: MyPussy -> presenter.setFavoriteState(holder, pussy)},
+            {holder: PussyHolderView, pussy: MyPussy -> presenter.favoriteClicked(holder, pussy)}
+        )
+
         pussyListView.adapter = adapter
 
         errorText = root.error_text
@@ -109,7 +113,7 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView,
 
     override fun onStart() {
         super.onStart()
-        presenter.fragmentStarted(wasLoaded)
+        presenter.fragmentStarted(adapter.itemCount > 0)
     }
 
     override fun onDestroy() {
@@ -137,8 +141,6 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView,
     }
 
     override fun finishLoading() {
-        wasLoaded = true
-
         flipper.displayedChild = if (adapter.isEmpty()) {
             EMPTY_LAYOUT
         } else {
@@ -170,8 +172,7 @@ class PussyFavoriteFragment : Fragment(), PussyFavoriteFragmentView,
 
     override fun refresh() {
         adapter.clearItems()
-        wasLoaded = false
-        presenter.fragmentStarted(wasLoaded)
+        presenter.fragmentStarted(false)
     }
 
     override fun onRefresh() {

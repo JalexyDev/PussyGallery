@@ -32,11 +32,11 @@ abstract class BasePresenter<View: PussyListFragmentView>() : DbChangeListener{
         fragmentView.loadFragment()
     }
 
-    fun fragmentStarted(isLoaded: Boolean) {
+    fun fragmentStarted(wasLoaded: Boolean) {
         if (myPussyItemsCache.isEmpty()) {
             getPussies()
         } else{
-            if (isLoaded.not()) {
+            if (wasLoaded.not()) {
                 fragmentView.addPussies(myPussyItemsCache)
             }
             fragmentView.finishLoading()

@@ -9,15 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jalexy.pussygallery.GlideApp
 import com.jalexy.pussygallery.R
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
-import com.jalexy.pussygallery.mvp.presenter.BasePresenter
 import com.jalexy.pussygallery.mvp.view.PussyHolderView
-import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
 import com.jalexy.pussygallery.mvp.view.ui.PussyActivity
 import kotlinx.android.synthetic.main.holder_pussy.view.*
 
 class PussyRecyclerViewAdapter(
-    private val context: Context,
-    private val presenter: BasePresenter<out PussyListFragmentView>
+    private val context: Context?,
+    private val retryLoadListener: () -> Unit,
+    private val favoriteStateSetter: (holder: PussyHolderView, pussy: MyPussy) -> Unit,
+    private val onFavoriteClickListener: (holder: PussyHolderView, pussy: MyPussy) -> Unit
 ) : BaseRecyclerViewAdapter() {
 
     private val holders: HashMap<String, PussyHolderView> by lazy {
@@ -25,7 +25,7 @@ class PussyRecyclerViewAdapter(
     }
 
     override fun onRetryClick() {
-        presenter.retryLoad()
+        retryLoadListener()
     }
 
     override fun onCreateItemHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -62,24 +62,26 @@ class PussyRecyclerViewAdapter(
 
             pussy = pussyItem
 
-            GlideApp.with(context)
-                .load(pussy.url)
-                .placeholder(R.drawable.ic_placeholder)
-                .centerCrop()
-                .into(image)
+            context?.let {
+                GlideApp.with(it)
+                    .load(pussy.url)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .centerCrop()
+                    .into(image)
+            }
 
-            image.setOnClickListener{
-                context.startActivity(
+            image.setOnClickListener {
+                context?.startActivity(
                     Intent(context, PussyActivity::class.java).apply {
                         putExtra(PussyActivity.IMAGE_URL, pussy.url)
                     })
             }
 
-            presenter.setFavoriteState(this, pussy)
+            favoriteStateSetter(this, pussy)
 
             favoriteBtn.setOnClickListener {
                 it.isEnabled = false
-                presenter.favoriteClicked(this, pussy)
+                onFavoriteClickListener(this, pussy)
             }
         }
 
