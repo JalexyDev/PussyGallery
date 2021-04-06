@@ -10,11 +10,15 @@ import io.reactivex.schedulers.Schedulers
 
 class PussyFavoriteDbManager(private val databaseHandler: DatabaseHandler) {
 
-    fun getAllFavorites() : Flowable<ArrayList<MyPussy>> =
+    fun getAllFavorites(): Flowable<ArrayList<MyPussy>> =
         Flowable.just(databaseHandler.getAllFavorites())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 
     fun addPussyToFavorite(pussy: MyPussy) =
-        Completable.fromAction { databaseHandler.addFavoritePussy(pussy)}
+        Completable.fromAction { databaseHandler.addFavoritePussy(pussy) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 
     fun getFavoritePussy(pussyId: String): Observable<MyPussy> =
         Observable.just(databaseHandler.getFavoritePussy(pussyId))
@@ -22,7 +26,7 @@ class PussyFavoriteDbManager(private val databaseHandler: DatabaseHandler) {
             .observeOn(AndroidSchedulers.mainThread())
 
     fun deletePussyFromFavorite(pussy: MyPussy) =
-        Completable.fromAction{ databaseHandler.deletePussyFromFavorites(pussy)}
+        Completable.fromAction { databaseHandler.deletePussyFromFavorites(pussy) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 }

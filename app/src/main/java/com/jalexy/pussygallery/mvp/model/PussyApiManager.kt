@@ -1,5 +1,8 @@
 package com.jalexy.pussygallery.mvp.model
 
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+
 class PussyApiManager(private val apiService: PussyApi) {
     companion object {
         const val ORDER_RANDOM = "random"
@@ -14,4 +17,6 @@ class PussyApiManager(private val apiService: PussyApi) {
         page: Int,
         format: String
     ) = apiService.getImages(size, order, limit, page, format)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 }

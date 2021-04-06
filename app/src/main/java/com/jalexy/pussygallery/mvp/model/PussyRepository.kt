@@ -6,8 +6,6 @@ import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 class PussyRepository(val apiManager: PussyApiManager, val dbManager: PussyFavoriteDbManager) {
 
@@ -45,26 +43,16 @@ class PussyRepository(val apiManager: PussyApiManager, val dbManager: PussyFavor
         format: String = "json"
     ): Observable<ArrayList<Image>> =
         apiManager.getImages(size, order, limit, page, format)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 
     fun getFavorites(): Flowable<ArrayList<MyPussy>> =
         dbManager.getAllFavorites()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 
     fun getFavoriteByIdOrPussyId(pussyId: String = ""): Observable<MyPussy> =
         dbManager.getFavoritePussy(pussyId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 
     fun addToFavorite(pussy: MyPussy): Completable =
         dbManager.addPussyToFavorite(pussy)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 
     fun deleteFavorite(pussy: MyPussy): Completable =
         dbManager.deletePussyFromFavorite(pussy)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 }
