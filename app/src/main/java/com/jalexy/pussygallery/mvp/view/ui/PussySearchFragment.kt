@@ -5,11 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import android.widget.ViewFlipper
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,15 +24,10 @@ import kotlinx.android.synthetic.main.fragment_image_list.view.*
 import javax.inject.Inject
 
 
-class PussySearchFragment : Fragment(), PussySearchFragmentView,
+class PussySearchFragment : BaseFragment(), PussySearchFragmentView,
     SwipeRefreshLayout.OnRefreshListener {
 
     companion object {
-
-        private const val LOAD_LAYOUT = 0
-        private const val CONTENT_LAYOUT = 1
-        private const val ERROR_LAYOUT = 2
-
         @JvmStatic
         fun newInstance(): PussySearchFragment {
             return PussySearchFragment()
@@ -47,9 +39,6 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
 
     private lateinit var refresher: SwipeRefreshLayout
     private lateinit var flipper: ViewFlipper
-    private lateinit var pussyListView: RecyclerView
-    private lateinit var errorText: TextView
-    private lateinit var retryBtn: Button
 
     private lateinit var adapter: PussyRecyclerViewAdapter
 
@@ -72,7 +61,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
 
         flipper = root.flipper
 
-        pussyListView = root.pussy_list
+        val pussyListView = root.pussy_list
 
         val orientation = resources.configuration.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -120,8 +109,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
             }
         })
 
-        errorText = root.error_text
-        retryBtn = root.retry_btn
+        val retryBtn = root.retry_btn
         retryBtn.setOnClickListener { onRefresh() }
 
         presenter.fragmentOpened()

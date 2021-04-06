@@ -3,7 +3,7 @@ package com.jalexy.pussygallery.mvp.presenter
 import android.util.Log
 import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.database.DbChangeListener
-import com.jalexy.pussygallery.di.components.RepositoryComponent
+import com.jalexy.pussygallery.di.components.AppComponent
 import com.jalexy.pussygallery.mvp.model.PussyRepository
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.view.PussyHolderView
@@ -105,5 +105,5 @@ abstract class BasePresenter<View: PussyListFragmentView>() : DbChangeListener{
         disposables.clear()
     }
 
-    protected fun getRepositoryComponent(): RepositoryComponent = PussyApplication.repositoryComponent
+    protected fun getAppComponent(): AppComponent = PussyApplication.appComponent
 }

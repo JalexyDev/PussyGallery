@@ -9,7 +9,7 @@ import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 
-class PussyFavoritePresenter() : BasePresenter<PussyFavoriteFragmentView>() {
+class PussyFavoritePresenter : BasePresenter<PussyFavoriteFragmentView>() {
 
     @Inject
     override lateinit var repository: PussyRepository
@@ -17,7 +17,7 @@ class PussyFavoritePresenter() : BasePresenter<PussyFavoriteFragmentView>() {
     override lateinit var fragmentView: PussyFavoriteFragmentView
 
     init {
-        getRepositoryComponent().inject(this)
+        getAppComponent().inject(this)
         myPussyItemsCache = ArrayList()
         registerOnUpdates()
     }

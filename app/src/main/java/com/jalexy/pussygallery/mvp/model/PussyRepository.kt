@@ -1,6 +1,5 @@
 package com.jalexy.pussygallery.mvp.model
 
-import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.database.DbChangeListener
 import com.jalexy.pussygallery.mvp.model.entities.Image
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
@@ -9,21 +8,11 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
 
-class PussyRepository {
-    @Inject
-    lateinit var apiManager: PussyApiManager
-
-    @Inject
-    lateinit var dbManager: PussyFavoriteDbManager
+class PussyRepository(val apiManager: PussyApiManager, val dbManager: PussyFavoriteDbManager) {
 
     private val observers: ArrayList<DbChangeListener> by lazy {
         ArrayList<DbChangeListener>()
-    }
-
-    init {
-        PussyApplication.appComponent.inject(this)
     }
 
     fun addDbChangeListener(listener: DbChangeListener) {
