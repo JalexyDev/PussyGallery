@@ -2,7 +2,9 @@ package com.jalexy.pussygallery
 
 import android.app.Application
 import android.content.Context
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class PussyApplication : Application() {
 
     companion object {

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.jalexy.pussygallery.GlideApp
 import com.jalexy.pussygallery.R
 import com.jalexy.pussygallery.databinding.ActivityPussyDetailsBinding
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.disposables.Disposable
@@ -22,7 +23,7 @@ import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.*
 
-
+@AndroidEntryPoint
 class PussyActivity : AppCompatActivity() {
 
     companion object {

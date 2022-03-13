@@ -9,22 +9,20 @@ import com.jalexy.pussygallery.GlideApp
 import com.jalexy.pussygallery.R
 import com.jalexy.pussygallery.databinding.HolderPussyBinding
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
-import com.jalexy.pussygallery.mvp.presenter.BasePresenter
-import com.jalexy.pussygallery.mvp.view.PussyHolderView
-import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
 import com.jalexy.pussygallery.mvp.view.ui.PussyActivity
+import dagger.hilt.android.qualifiers.ActivityContext
+import javax.inject.Inject
 
-class PussyRecyclerViewAdapter(
-    private val context: Context,
-    private val presenter: BasePresenter<out PussyListFragmentView>
+class PussyRecyclerViewAdapter @Inject constructor(
+    @ActivityContext private val context: Context,
 ) : BaseRecyclerViewAdapter() {
 
-    private val holders: HashMap<String, PussyHolderView> by lazy {
-        HashMap<String, PussyHolderView>()
-    }
+    var retryLoadListener: (() -> Unit)? = null
+    var setFavoriteStateListener: ((pussy: MyPussy, callback: (Boolean) -> Unit) -> Unit)? = null
+    var favoriteClickedListener: ((pussy: MyPussy, callback: (Boolean) -> Unit) -> Unit)? = null
 
     override fun onRetryClick() {
-        presenter.retryLoad()
+        retryLoadListener?.invoke()
     }
 
     override fun onCreateItemHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -44,39 +42,41 @@ class PussyRecyclerViewAdapter(
         if (position == -1) return
 
         if (item is MyPussy) {
-            holders[item.pussyId]?.setPussyFavorite(item.isInFavorite())
+            //todo заменить это дерьмо на нормальное обновление через состояние итема
+//            holders[item.pussyId]?.setPussyFavorite(item.isInFavorite())
         }
     }
 
     private inner class PussyHolder(val binding: HolderPussyBinding) :
-        RecyclerView.ViewHolder(binding.root), PussyHolderView {
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(pussyItem: MyPussy) {
-
-            holders[pussyItem.pussyId] = this
-
             GlideApp.with(context)
                 .load(pussyItem.url)
                 .placeholder(R.drawable.ic_placeholder)
                 .centerCrop()
                 .into(binding.pussyImage)
 
-            binding.pussyImage.setOnClickListener{
+            binding.pussyImage.setOnClickListener {
                 context.startActivity(
                     Intent(context, PussyActivity::class.java).apply {
                         putExtra(PussyActivity.IMAGE_URL, pussyItem.url)
                     })
             }
 
-            presenter.setFavoriteState(this, pussyItem)
+            setFavoriteStateListener?.invoke(pussyItem) { isFavorite -> setPussyFavorite(isFavorite) }
 
             binding.favoriteBtn.setOnClickListener {
                 it.isEnabled = false
-                presenter.favoriteClicked(this, pussyItem)
+                favoriteClickedListener?.invoke(pussyItem) { isFavorite ->
+                    setPussyFavorite(
+                        isFavorite
+                    )
+                }
             }
         }
 
-        override fun setPussyFavorite(isFavorite: Boolean) {
+        private fun setPussyFavorite(isFavorite: Boolean) {
             binding.favoriteBtn.setImageResource(
                 if (isFavorite)
                     R.drawable.selector_favorite_selected

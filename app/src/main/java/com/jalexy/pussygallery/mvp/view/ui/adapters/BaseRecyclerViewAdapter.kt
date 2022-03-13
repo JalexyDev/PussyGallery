@@ -85,6 +85,13 @@ abstract class BaseRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.Vie
         notifyItemRangeInserted(lastCount, newItems.count())
     }
 
+    fun setPussies(newItems: List<out Item>) {
+        //todo заменить на сабмит у ListAdapter
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
     fun addItem(newItem: Item) {
         items.add(newItem)
         notifyItemInserted(items.count() - 1)

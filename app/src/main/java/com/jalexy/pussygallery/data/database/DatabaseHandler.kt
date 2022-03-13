@@ -15,9 +15,12 @@ import com.jalexy.pussygallery.data.database.DbParams.KEY_SUB_ID
 import com.jalexy.pussygallery.data.database.DbParams.KEY_URL
 import com.jalexy.pussygallery.data.database.DbParams.TABLE_NAME
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class DatabaseHandler @Inject constructor(context: Context) :
+class DatabaseHandler @Inject constructor(
+    @ApplicationContext context: Context
+) :
     SQLiteOpenHelper(context, DB_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {

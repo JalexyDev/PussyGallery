@@ -7,23 +7,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.jalexy.pussygallery.R
+import com.jalexy.pussygallery.base.viewmodels.observeEvents
 import com.jalexy.pussygallery.databinding.FragmentImageListBinding
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
-import com.jalexy.pussygallery.mvp.presenter.PussySearchPresenter
-import com.jalexy.pussygallery.mvp.view.PussySearchFragmentView
+import com.jalexy.pussygallery.mvp.presenter.PussySearchViewModel
+import com.jalexy.pussygallery.mvp.view.models.ScreenState
 import com.jalexy.pussygallery.mvp.view.ui.adapters.BaseRecyclerViewAdapter
 import com.jalexy.pussygallery.mvp.view.ui.adapters.PussyRecyclerViewAdapter
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
-
-class PussySearchFragment : Fragment(), PussySearchFragmentView,
-    SwipeRefreshLayout.OnRefreshListener {
+@AndroidEntryPoint
+class PussySearchFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     companion object {
 
@@ -37,8 +38,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
         }
     }
 
-    @Inject
-    protected lateinit var presenter: PussySearchPresenter
+    private val viewModel by viewModels<PussySearchViewModel>()
 
     private var _binding: FragmentImageListBinding? = null
     private val binding get() = _binding!!
@@ -46,16 +46,11 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
     private lateinit var adapter: PussyRecyclerViewAdapter
     private var wasLoaded = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        presenter.setView(this)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentImageListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -71,7 +66,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
             val layoutManager = GridLayoutManager(context, 2)
             layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return when (adapter?.getItemViewType(position)) {
+                    return when (adapter.getItemViewType(position)) {
                         BaseRecyclerViewAdapter.LOADER_TYPE, BaseRecyclerViewAdapter.LOAD_ERROR_TYPE -> 2
                         else -> 1
                     }
@@ -88,7 +83,13 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
 
         binding.pussyList.itemAnimator = DefaultItemAnimator()
 
-        adapter = PussyRecyclerViewAdapter(requireContext(), presenter)
+        adapter = PussyRecyclerViewAdapter(requireContext())
+        adapter.retryLoadListener = { viewModel.retryLoad() }
+        adapter.setFavoriteStateListener =
+            { pussy, callback -> viewModel.setFavoriteState(pussy, callback) }
+        adapter.favoriteClickedListener =
+            { pussy, callback -> viewModel.favoriteClicked(pussy, callback) }
+
         binding.pussyList.adapter = adapter
 
         binding.pussyList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -100,36 +101,57 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
                 val lastVisibleItemPos = layoutManager.findLastVisibleItemPosition()
 
                 if (lastVisibleItemPos == totalItemCount - 1 && !adapter.hasError()) {
-                    presenter.scrolledToEnd()
+                    viewModel.scrolledToEnd()
                 }
             }
         })
 
         binding.retryBtn.setOnClickListener { onRefresh() }
 
-        presenter.fragmentOpened()
+        observeViewModel()
+    }
+
+    private fun observeViewModel() {
+        viewModel.screenState.observe(viewLifecycleOwner) {
+            when (it) {
+                ScreenState.Content -> finishLoading()
+                is ScreenState.Error -> showError()
+                ScreenState.Loading -> loadFragment()
+            }
+        }
+        viewModel.pussiesState.observe(viewLifecycleOwner) {
+            addPussies(it)
+        }
+        viewModel.refreshEvent.observeEvents(viewLifecycleOwner) {
+            refresh()
+        }
+        viewModel.loadItemsEvent.observeEvents(viewLifecycleOwner) {
+            loadItems()
+        }
+        viewModel.updateItemEvent.observeEvents(viewLifecycleOwner) {
+            updatePussy(it)
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        presenter.fragmentStarted(wasLoaded)
+        viewModel.fragmentStarted(wasLoaded)
     }
 
     override fun onDestroy() {
-        presenter.destroy()
         adapter.clearItems()
         super.onDestroy()
     }
 
-    override fun updatePussy(pussy: MyPussy) {
+    private fun updatePussy(pussy: MyPussy) {
         adapter.updateItem(pussy)
     }
 
-    override fun loadFragment() {
+    private fun loadFragment() {
         binding.flipper.displayedChild = LOAD_LAYOUT
     }
 
-    override fun showError() {
+    private fun showError() {
         if (binding.refresher.isRefreshing) binding.refresher.isRefreshing = false
 
         if (adapter.isEmpty()) {
@@ -139,11 +161,11 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
         }
     }
 
-    override fun loadItems() {
+    private fun loadItems() {
         adapter.addLoader()
     }
 
-    override fun finishLoading() {
+    private fun finishLoading() {
         wasLoaded = true
 
         binding.flipper.displayedChild = CONTENT_LAYOUT
@@ -151,19 +173,19 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
         adapter.removeLoader()
     }
 
-    override fun addPussies(pussies: ArrayList<MyPussy>) {
-        adapter.addItems(pussies)
+    private fun addPussies(pussies: List<MyPussy>) {
+        adapter.setPussies(pussies)
     }
 
-    override fun refresh() {
+    private fun refresh() {
         adapter.clearItems()
         wasLoaded = false
-        presenter.fragmentStarted(wasLoaded)
+        viewModel.fragmentStarted(wasLoaded)
     }
 
     override fun onRefresh() {
         if (binding.refresher.isRefreshing)
             binding.refresher.isRefreshing = false
-        presenter.refreshFragment()
+        viewModel.refreshFragment()
     }
 }
