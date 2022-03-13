@@ -8,10 +8,9 @@ import com.jalexy.pussygallery.mvp.view.PussySearchFragmentView
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
-class PussySearchPresenter() : BasePresenter<PussySearchFragmentView>() {
-
-    @Inject
-    override lateinit var repository: PussyRepository
+class PussySearchPresenter @Inject constructor(
+    private val repository: PussyRepository
+) : BasePresenter<PussySearchFragmentView>(repository) {
 
     override lateinit var fragmentView: PussySearchFragmentView
     // для задания полная форма бесполезна, но если надо, то вот она
@@ -20,7 +19,6 @@ class PussySearchPresenter() : BasePresenter<PussySearchFragmentView>() {
     private var page = 0
 
     init {
-        getRepositoryComponent().inject(this)
         myPussyItemsCache = ArrayList()
         registerOnUpdates()
     }

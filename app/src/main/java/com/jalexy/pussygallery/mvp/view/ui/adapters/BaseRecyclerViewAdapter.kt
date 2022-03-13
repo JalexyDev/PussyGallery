@@ -1,12 +1,10 @@
 package com.jalexy.pussygallery.mvp.view.ui.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
-import com.jalexy.pussygallery.R
-import kotlinx.android.synthetic.main.fragment_image_list.view.*
+import com.jalexy.pussygallery.databinding.HolderErrorBinding
+import com.jalexy.pussygallery.databinding.HolderLoaderBinding
 
 // маркер для элементов списка
 interface Item {
@@ -54,10 +52,10 @@ abstract class BaseRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.Vie
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             LOADER_TYPE -> LoaderHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.holder_loader, parent, false)
+                HolderLoaderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
             LOAD_ERROR_TYPE -> ErrorHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.holder_error, parent, false)
+                HolderErrorBinding.inflate(LayoutInflater.from(parent.context),parent, false)
             )
             else -> onCreateItemHolder(parent, viewType)
         }
@@ -143,14 +141,14 @@ abstract class BaseRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.Vie
     fun hasError() = items.contains(error)
 
     // класс для вставки анимации загрузки в конец списка
-    private inner class LoaderHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    private inner class LoaderHolder(binding: HolderLoaderBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     // класс для показа ошибки загрузки в конце списка
-    private inner class ErrorHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val retryBtn: Button = itemView.retry_btn
-
+    private inner class ErrorHolder(binding: HolderErrorBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         init {
-            retryBtn.setOnClickListener {
+            binding.retryBtn.setOnClickListener {
                 removeError()
                 onRetryClick()
             }

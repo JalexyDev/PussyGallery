@@ -14,11 +14,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.jalexy.pussygallery.GlideApp
 import com.jalexy.pussygallery.R
+import com.jalexy.pussygallery.databinding.ActivityPussyDetailsBinding
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_pussy_details.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,9 +36,12 @@ class PussyActivity : AppCompatActivity() {
     private var loadingImage = false
     private var allowLoading = false
 
+    private lateinit var binding: ActivityPussyDetailsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_pussy_details)
+        binding = ActivityPussyDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         title = "Киска"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -62,7 +65,7 @@ class PussyActivity : AppCompatActivity() {
         GlideApp.with(applicationContext)
             .load(imageUrl)
             .placeholder(R.drawable.ic_placeholder)
-            .into(pussy_image)
+            .into(binding.pussyImage)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

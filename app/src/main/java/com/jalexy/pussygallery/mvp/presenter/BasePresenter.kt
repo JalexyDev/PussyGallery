@@ -1,9 +1,7 @@
 package com.jalexy.pussygallery.mvp.presenter
 
 import android.util.Log
-import com.jalexy.pussygallery.PussyApplication
-import com.jalexy.pussygallery.database.DbChangeListener
-import com.jalexy.pussygallery.di.components.RepositoryComponent
+import com.jalexy.pussygallery.data.database.DbChangeListener
 import com.jalexy.pussygallery.mvp.model.PussyRepository
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.view.PussyHolderView
@@ -11,9 +9,10 @@ import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-abstract class BasePresenter<View: PussyListFragmentView>() : DbChangeListener{
+abstract class BasePresenter<View: PussyListFragmentView>(
+    private val repository: PussyRepository
+) : DbChangeListener{
 
-    abstract var repository: PussyRepository
     protected abstract var fragmentView: View
     protected lateinit var myPussyItemsCache: ArrayList<MyPussy>
     protected var isFree = true
@@ -104,6 +103,4 @@ abstract class BasePresenter<View: PussyListFragmentView>() : DbChangeListener{
     fun destroy() {
         disposables.clear()
     }
-
-    protected fun getRepositoryComponent(): RepositoryComponent = PussyApplication.repositoryComponent
 }

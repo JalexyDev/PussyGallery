@@ -1,6 +1,10 @@
 package com.jalexy.pussygallery.mvp.model
 
-class PussyApiManager(private val apiService: PussyApi) {
+import javax.inject.Inject
+
+class PussyApiManager @Inject constructor(
+    private val apiService: PussyApi
+) {
     companion object {
         const val ORDER_RANDOM = "random"
         const val ORDER_ASC = "asc"

@@ -1,14 +1,15 @@
 package com.jalexy.pussygallery.mvp.model
 
-import com.jalexy.pussygallery.database.DatabaseHandler
+import com.jalexy.pussygallery.data.database.DatabaseHandler
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class PussyFavoriteDbManager(private val databaseHandler: DatabaseHandler) {
+class PussyFavoriteDbManager @Inject constructor(private val databaseHandler: DatabaseHandler) {
 
     fun getAllFavorites() : Flowable<ArrayList<MyPussy>> =
         Flowable.just(databaseHandler.getAllFavorites())

@@ -1,4 +1,4 @@
-package com.jalexy.pussygallery.database
+package com.jalexy.pussygallery.data.database
 
 import android.content.ContentValues
 import android.content.Context
@@ -6,17 +6,18 @@ import android.database.Cursor
 import android.database.CursorIndexOutOfBoundsException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.jalexy.pussygallery.database.DbParams.DATABASE_VERSION
-import com.jalexy.pussygallery.database.DbParams.DB_NAME
-import com.jalexy.pussygallery.database.DbParams.KEY_ID
-import com.jalexy.pussygallery.database.DbParams.KEY_IS_FAVORITE
-import com.jalexy.pussygallery.database.DbParams.KEY_PUSSY_ID
-import com.jalexy.pussygallery.database.DbParams.KEY_SUB_ID
-import com.jalexy.pussygallery.database.DbParams.KEY_URL
-import com.jalexy.pussygallery.database.DbParams.TABLE_NAME
+import com.jalexy.pussygallery.data.database.DbParams.DATABASE_VERSION
+import com.jalexy.pussygallery.data.database.DbParams.DB_NAME
+import com.jalexy.pussygallery.data.database.DbParams.KEY_ID
+import com.jalexy.pussygallery.data.database.DbParams.KEY_IS_FAVORITE
+import com.jalexy.pussygallery.data.database.DbParams.KEY_PUSSY_ID
+import com.jalexy.pussygallery.data.database.DbParams.KEY_SUB_ID
+import com.jalexy.pussygallery.data.database.DbParams.KEY_URL
+import com.jalexy.pussygallery.data.database.DbParams.TABLE_NAME
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
+import javax.inject.Inject
 
-class DatabaseHandler(context: Context?) :
+class DatabaseHandler @Inject constructor(context: Context) :
     SQLiteOpenHelper(context, DB_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {

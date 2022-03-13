@@ -5,9 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
-import android.widget.ViewFlipper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -15,14 +12,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.jalexy.pussygallery.PussyApplication
 import com.jalexy.pussygallery.R
+import com.jalexy.pussygallery.databinding.FragmentImageListBinding
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.presenter.PussySearchPresenter
 import com.jalexy.pussygallery.mvp.view.PussySearchFragmentView
 import com.jalexy.pussygallery.mvp.view.ui.adapters.BaseRecyclerViewAdapter
 import com.jalexy.pussygallery.mvp.view.ui.adapters.PussyRecyclerViewAdapter
-import kotlinx.android.synthetic.main.fragment_image_list.view.*
 import javax.inject.Inject
 
 
@@ -44,18 +40,14 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
     @Inject
     protected lateinit var presenter: PussySearchPresenter
 
-    private lateinit var refresher: SwipeRefreshLayout
-    private lateinit var flipper: ViewFlipper
-    private lateinit var pussyListView: RecyclerView
-    private lateinit var errorText: TextView
-    private lateinit var retryBtn: Button
+    private var _binding: FragmentImageListBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var adapter: PussyRecyclerViewAdapter
     private var wasLoaded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        PussyApplication.fragmentComponent.inject(this)
         presenter.setView(this)
     }
 
@@ -64,15 +56,15 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_image_list, container, false)
+        _binding = FragmentImageListBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        refresher = root.refresher
-        refresher.setOnRefreshListener(this)
-        refresher.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        flipper = root.flipper
-
-        pussyListView = root.pussy_list
+        binding.refresher.setOnRefreshListener(this)
+        binding.refresher.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary)
 
         val orientation = resources.configuration.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -86,21 +78,20 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
                 }
             }
 
-            pussyListView.layoutManager = layoutManager
+            binding.pussyList.layoutManager = layoutManager
 
         } else {
             (activity as AppCompatActivity).supportActionBar?.show()
-
-            pussyListView.layoutManager = LinearLayoutManager(context)
+            binding.pussyList.layoutManager = LinearLayoutManager(context)
         }
 
 
-        pussyListView.itemAnimator = DefaultItemAnimator()
+        binding.pussyList.itemAnimator = DefaultItemAnimator()
 
-        adapter = PussyRecyclerViewAdapter(context!!, presenter)
-        pussyListView.adapter = adapter
+        adapter = PussyRecyclerViewAdapter(requireContext(), presenter)
+        binding.pussyList.adapter = adapter
 
-        pussyListView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.pussyList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
@@ -114,13 +105,9 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
             }
         })
 
-        errorText = root.error_text
-        retryBtn = root.retry_btn
-        retryBtn.setOnClickListener { onRefresh() }
+        binding.retryBtn.setOnClickListener { onRefresh() }
 
         presenter.fragmentOpened()
-
-        return root
     }
 
     override fun onStart() {
@@ -139,14 +126,14 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
     }
 
     override fun loadFragment() {
-        flipper.displayedChild = LOAD_LAYOUT
+        binding.flipper.displayedChild = LOAD_LAYOUT
     }
 
     override fun showError() {
-        if (refresher.isRefreshing) refresher.isRefreshing = false
+        if (binding.refresher.isRefreshing) binding.refresher.isRefreshing = false
 
         if (adapter.isEmpty()) {
-            flipper.displayedChild = ERROR_LAYOUT
+            binding.flipper.displayedChild = ERROR_LAYOUT
         } else {
             adapter.addError()
         }
@@ -159,7 +146,7 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
     override fun finishLoading() {
         wasLoaded = true
 
-        flipper.displayedChild = CONTENT_LAYOUT
+        binding.flipper.displayedChild = CONTENT_LAYOUT
 
         adapter.removeLoader()
     }
@@ -175,7 +162,8 @@ class PussySearchFragment : Fragment(), PussySearchFragmentView,
     }
 
     override fun onRefresh() {
-        if (refresher.isRefreshing) refresher.isRefreshing = false
+        if (binding.refresher.isRefreshing)
+            binding.refresher.isRefreshing = false
         presenter.refreshFragment()
     }
 }

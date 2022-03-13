@@ -1,4 +1,4 @@
-package com.jalexy.pussygallery.database
+package com.jalexy.pussygallery.data.database
 
 object DbParams {
 

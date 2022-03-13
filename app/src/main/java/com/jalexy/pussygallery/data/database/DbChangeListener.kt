@@ -1,4 +1,4 @@
-package com.jalexy.pussygallery.database
+package com.jalexy.pussygallery.data.database
 
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 

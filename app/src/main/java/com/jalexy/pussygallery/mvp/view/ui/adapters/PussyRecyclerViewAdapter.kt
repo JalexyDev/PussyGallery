@@ -3,17 +3,16 @@ package com.jalexy.pussygallery.mvp.view.ui.adapters
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.jalexy.pussygallery.GlideApp
 import com.jalexy.pussygallery.R
+import com.jalexy.pussygallery.databinding.HolderPussyBinding
 import com.jalexy.pussygallery.mvp.model.entities.MyPussy
 import com.jalexy.pussygallery.mvp.presenter.BasePresenter
 import com.jalexy.pussygallery.mvp.view.PussyHolderView
 import com.jalexy.pussygallery.mvp.view.PussyListFragmentView
 import com.jalexy.pussygallery.mvp.view.ui.PussyActivity
-import kotlinx.android.synthetic.main.holder_pussy.view.*
 
 class PussyRecyclerViewAdapter(
     private val context: Context,
@@ -30,7 +29,7 @@ class PussyRecyclerViewAdapter(
 
     override fun onCreateItemHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return PussyHolder(
-            LayoutInflater.from(viewGroup.context).inflate(R.layout.holder_pussy, viewGroup, false)
+            HolderPussyBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         )
     }
 
@@ -49,49 +48,43 @@ class PussyRecyclerViewAdapter(
         }
     }
 
-    private inner class PussyHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView), PussyHolderView {
-
-        private lateinit var pussy: MyPussy
-        private val image = itemView.pussy_image
-        private val favoriteBtn = itemView.favorite_btn
+    private inner class PussyHolder(val binding: HolderPussyBinding) :
+        RecyclerView.ViewHolder(binding.root), PussyHolderView {
 
         fun bind(pussyItem: MyPussy) {
 
             holders[pussyItem.pussyId] = this
 
-            pussy = pussyItem
-
             GlideApp.with(context)
-                .load(pussy.url)
+                .load(pussyItem.url)
                 .placeholder(R.drawable.ic_placeholder)
                 .centerCrop()
-                .into(image)
+                .into(binding.pussyImage)
 
-            image.setOnClickListener{
+            binding.pussyImage.setOnClickListener{
                 context.startActivity(
                     Intent(context, PussyActivity::class.java).apply {
-                        putExtra(PussyActivity.IMAGE_URL, pussy.url)
+                        putExtra(PussyActivity.IMAGE_URL, pussyItem.url)
                     })
             }
 
-            presenter.setFavoriteState(this, pussy)
+            presenter.setFavoriteState(this, pussyItem)
 
-            favoriteBtn.setOnClickListener {
+            binding.favoriteBtn.setOnClickListener {
                 it.isEnabled = false
-                presenter.favoriteClicked(this, pussy)
+                presenter.favoriteClicked(this, pussyItem)
             }
         }
 
         override fun setPussyFavorite(isFavorite: Boolean) {
-            favoriteBtn.setImageResource(
+            binding.favoriteBtn.setImageResource(
                 if (isFavorite)
                     R.drawable.selector_favorite_selected
                 else
                     R.drawable.selector_favorite_enable
             )
 
-            favoriteBtn.isEnabled = true
+            binding.favoriteBtn.isEnabled = true
         }
     }
 }
